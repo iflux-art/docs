@@ -22,7 +22,7 @@ export function isValidDocPath(slug: string[]): boolean {
   }
 
   // 其他路径检查逻辑
-  const docsDir = path.join(process.cwd(), "src", "content", "docs");
+  const docsDir = path.join(process.cwd(), "src", "content");
   const absolutePath = path.join(docsDir, ...slug);
 
   // 检查是否存在.md或.mdx文件

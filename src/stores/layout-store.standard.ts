@@ -49,7 +49,7 @@ export const BREAKPOINTS = {
 
 // 初始状态
 export const initialState: LayoutState = {
-  layoutType: "full-width",
+  layoutType: "double-sidebar", // 只保留双侧边栏布局作为默认布局
   sidebars: [],
   isMobile: false,
   isTablet: false,

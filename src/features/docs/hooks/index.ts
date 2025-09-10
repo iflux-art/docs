@@ -45,7 +45,7 @@ export type { DocItem, DocCategory, DocListItem };
  * @returns 所有文档列表
  */
 export async function getAllDocs(): Promise<DocListItem[]> {
-  const response = await fetch("/api/docs/list");
+  const response = await fetch(API_PATHS.content.DocList);
   if (!response.ok) {
     throw new Error("获取文档列表失败");
   }

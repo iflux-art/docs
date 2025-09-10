@@ -70,7 +70,7 @@ export function useGlobalDocsState(): UseGlobalDocsStateResult {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/docs/global-structure");
+      const response = await fetch("/api/docs-global-structure");
 
       if (!response.ok) {
         throw new Error(`Failed to fetch global docs structure: ${response.statusText}`);

@@ -4,7 +4,7 @@
  * 内联所有相关类型和逻辑，避免外部依赖
  */
 
-import type { TocHeading } from "@/types/props-types";
+import type { TocHeading } from "@/features/toc/types";
 
 /**
  * 转义正则表达式特殊字符
@@ -45,7 +45,7 @@ export function extractHeadings(content: string): {
           .replace(/[^\w-]/g, "")}-${match.index}`;
 
       if (level >= 1 && level <= 4) {
-        headings.push({ id, text: finalText, level });
+        headings.push({ id, text: finalText, content: finalText, level });
       }
     }
 

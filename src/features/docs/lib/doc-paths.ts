@@ -83,11 +83,14 @@ export const generateDocPathsFromStructure = (): { slug: string[] }[] => {
       for (const item of items) {
         if (item.type === "menu" && item.items && item.items.length > 0) {
           traverse(item.items, [...currentSlug, item.title]);
-        } else if (item.type === "page") {
-          const pathKey = [...currentSlug, item.title].join("/");
+        } else if (item.type === "page" && item.href) {
+          // 从 href 中提取路径
+          const hrefPath = item.href.replace(/^\/docs\//, "");
+          const slug = hrefPath.split("/");
+          const pathKey = slug.join("/");
           if (!seenPaths.has(pathKey)) {
             seenPaths.add(pathKey);
-            paths.push({ slug: [...currentSlug, item.title] });
+            paths.push({ slug });
           }
         }
       }
@@ -120,7 +123,16 @@ export const generateDocPaths = (): { slug: string[] }[] => {
   }
 
   performanceMetrics.cacheMisses++;
-  const paths = generateDocPathsFromStructure();
+
+  // 使用文件系统扫描方式生成路径
+  const contentDir = path.join(process.cwd(), "src", "content");
+  const paths = scanContentDirectory({
+    contentDir,
+    filter: itemPath => {
+      // 过滤掉 _meta.json 文件
+      return !itemPath.endsWith("_meta.json");
+    },
+  });
 
   docsStructureCache = paths;
   cacheTimestamp = now;
@@ -146,15 +158,12 @@ function isValidNavigationItem(item: SidebarItem): boolean {
 /**
  * 标准化路径
  */
-function normalizeItemPath(item: SidebarItem, topLevelCategory: string): string {
-  let itemPath = item.href;
+function normalizeItemPath(item: SidebarItem, _topLevelCategory: string): string {
+  const itemPath = item.href;
   if (!itemPath) {
     return "";
   }
-  if (!itemPath.startsWith("/docs/")) {
-    // This case should ideally not happen if hrefs from getDocDirectoryStructure are well-formed
-    itemPath = `/docs/${topLevelCategory}/${itemPath.replace(/^\//, "")}`;
-  }
+  // 不再添加/docs/前缀，因为路由已经提升到根路径
   return itemPath.replace(/\\/g, "/");
 }
 

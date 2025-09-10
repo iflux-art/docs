@@ -20,6 +20,9 @@ export {
 export { useSearch } from "./hooks/use-search";
 export { useSearchState } from "./hooks/use-search-state";
 
+// Store 导出
+export { useSearchStore } from "./stores/search-store.standard";
+
 // 组件导出
 export {
   SearchDialog,

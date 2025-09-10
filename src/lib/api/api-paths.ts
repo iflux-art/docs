@@ -6,21 +6,11 @@
 
 // 内容API路径
 export const CONTENT_API_PATHS = {
-  // 博客相关  // 已移除 blog 版块
-
   // 文档相关
   Docs: "/api/docs",
   Doc: (slug: string) => `/api/docs/${slug}`,
-  DocCategories: "/api/docs/categories",
-} as const;
-
-// // 博客API路径  // 已移除 blog 版块
-
-// 用户API路径
-export const USER_API_PATHS = {
-  Profile: "/api/user/profile",
-  Settings: "/api/user/settings",
-  Preferences: "/api/user/preferences",
+  DocCategories: "/api/docs-categories",
+  DocList: "/api/docs-list",
 } as const;
 
 // 搜索API路径
@@ -29,34 +19,9 @@ export const SEARCH_API_PATHS = {
   SearchSuggestions: "/api/search/suggestions",
 } as const;
 
-// 分析API路径
-export const ANALYTICS_API_PATHS = {
-  PageViews: "/api/analytics/page-views",
-  UserActivity: "/api/analytics/user-activity",
-} as const;
-
-// 通知API路径
-export const NOTIFICATION_API_PATHS = {
-  Notifications: "/api/notifications",
-  Notification: (id: string) => `/api/notifications/${id}`,
-  MarkAsRead: "/api/notifications/mark-as-read",
-} as const;
-
-// // 友链API路径  // 已移除友链版块
-// export const FRIENDS_API_PATHS = {
-//   Friends: "/api/friends",
-//   Apply: "/api/friends/apply",
-//   Stats: "/api/friends/stats",
-// } as const;
-
 // 导出API_PATHS以保持向后兼容性
 export const API_PATHS = {
-  // blog: BLOG_API_PATHS,  // 已移除 blog 版块
   content: CONTENT_API_PATHS,
-  user: USER_API_PATHS,
   search: SEARCH_API_PATHS,
-  analytics: ANALYTICS_API_PATHS,
-  notification: NOTIFICATION_API_PATHS,
-  // friends: FRIENDS_API_PATHS,  // 已移除友链版块
   docs: CONTENT_API_PATHS, // 为文档API提供别名以保持向后兼容性
 } as const;

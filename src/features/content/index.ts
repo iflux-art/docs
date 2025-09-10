@@ -1,7 +1,7 @@
 /**
  * 内容功能模块统一导出
  *
- * 包含博客和文档等内容相关功能的公共组件、类型、工具函数等
+ * 包含文档等内容相关功能的公共组件、类型、工具函数等
  */
 
 // 类型导出
@@ -47,7 +47,6 @@ export {
   MDXPre,
   // 内容展示组件
   ContentDisplay,
-  DocPagination,
   // 代码高亮组件
   CodeBlock,
 } from "./components";

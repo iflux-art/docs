@@ -13,10 +13,10 @@ export type {
   SidebarWrapperProps,
   GridColsMap,
   GridGapMap,
-} from "./layout-types";
+} from "@/features/layout/layout-types";
 
 // 新增异步操作相关类型
-export type { UseAsyncOptions, AsyncOperationResult, CacheOptions } from "./async-types";
+export type { CacheOptions, UseAsyncOptions } from "./async-types";
 
 // SEO相关类型
 export type {
@@ -32,21 +32,8 @@ export type {
 // 配置相关类型
 export type { SiteMetadata, IosConfig, WindowsConfig } from "./config-types";
 
-// Props相关类型
-export type {
-  CardProps,
-  ButtonProps,
-  PageHeaderProps,
-  SearchFilterProps,
-  DataTableColumn,
-  DataTableAction,
-  DataTablePagination,
-  DataTableProps,
-  UserInfo,
-  UserInfoCardProps,
-  AccountDetailsCardProps,
-  TocHeading,
-  TableOfContentsCardProps,
-} from "./props-types";
-
-export type { ProfileLink } from "./profile-types";
+// ==================== 组件 Props 类型 ====================
+// 已移除文档项目中不使用的通用组件Props类型定义
+// TOC相关类型已移至 src/features/toc/types.ts
+// 数据表格和用户信息相关类型已移除
+// ProfileLink 类型已移除

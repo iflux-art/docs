@@ -56,7 +56,7 @@ async function getDocs(): Promise<DocFile[]> {
         const { data, content: markdown } = matter(content);
         const frontmatter = data as Frontmatter;
         const relativePath = path.relative(docsDir, file);
-        const url = `/docs/${relativePath.replace(/\.(md|mdx)$/, "")}`;
+        const url = `/${relativePath.replace(/\.(md|mdx)$/, "")}`;
 
         return {
           title: frontmatter.title ?? "",

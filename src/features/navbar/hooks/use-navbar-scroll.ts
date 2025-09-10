@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo } from "react";
 
-import { useNavbarStore } from "@/stores";
+import { useNavbarStore } from "../stores/navbar-store.standard";
 
 /**
  * 节流滚动事件处理函数类型（带 cancel 方法）
@@ -90,10 +90,7 @@ export function useNavbarScroll() {
   const shouldShowPageTitle = useCallback(() => {
     const pathSegments = pathname.split("/").filter(Boolean);
 
-    // 只在博客详情页和文档详情页显示页面标题
-    if (pathSegments[0] === "blog" && pathSegments.length > 1) {
-      return true; // 博客详情页: /blog/[...slug]
-    }
+    // 只在文档详情页显示页面标题
     if (pathSegments[0] === "docs" && pathSegments.length > 1) {
       return true; // 文档详情页: /docs/[...slug]
     }
@@ -118,9 +115,6 @@ export function useNavbarScroll() {
 
         // 如果没有 h1 或标题为空，根据路径设置默认标题
         const pathSegments = pathname.split("/").filter(Boolean);
-        // if (pathSegments[0] === "blog" && pathSegments.length > 1) {  // 已移除 blog 版块
-        //   setPageTitle("博客详情");
-        // } else
         if (pathSegments[0] === "docs" && pathSegments.length > 1) {
           setPageTitle("文档详情");
         }

@@ -8,7 +8,6 @@ export {
   withValidation,
   withRateLimit,
   runMiddleware,
-  withPublicApi,
   withErrorHandling,
   isValidUrl,
   validateRequiredFields,
@@ -25,9 +24,6 @@ export {
   handleComponentError,
 } from "./error";
 
-// 布局工具
-export { getContainerClassName } from "./layout/layout-utils";
-
 // 异步操作工具
 export { executeAsyncOperation, executeWithRetry } from "@/utils/async";
 
@@ -37,18 +33,6 @@ export {
   createFilteredStateManager,
   createConfigManager,
 } from "@/utils/state";
-
-// ==================== 元数据和SEO工具函数 ====================
-export {
-  generateViewport,
-  generateMetadata,
-  generateArticleMetadata,
-  generateProfileMetadata,
-} from "./metadata/metadata";
-export {
-  generateDocsMetadata,
-  generateSEOMetadata,
-} from "./metadata/seo-utils";
 
 // ==================== API工具函数 ====================
 // 从 api-utils 导出
@@ -73,7 +57,6 @@ export type {
 export {
   withLogging,
   withValidation as apiWithValidation,
-  withCORS,
 } from "./api/api-middleware";
 
 // 从 api-paths 导出
@@ -81,8 +64,5 @@ export {
   API_PATHS,
   // BLOG_API_PATHS,  // 已移除 blog 版块
   CONTENT_API_PATHS,
-  NOTIFICATION_API_PATHS,
   SEARCH_API_PATHS,
-  USER_API_PATHS,
-  ANALYTICS_API_PATHS,
 } from "./api/api-paths";

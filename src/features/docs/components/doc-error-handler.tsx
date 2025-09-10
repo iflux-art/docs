@@ -22,7 +22,7 @@ export const DocErrorHandler = ({
   error,
   className = "",
 }: DocErrorHandlerProps) => {
-  const requestedPath = slug ? `/docs/${slug.join("/")}` : "/docs";
+  const requestedPath = slug ? `/${slug.join("/")}` : "/";
 
   // 记录错误信息用于调试
   if (error) {

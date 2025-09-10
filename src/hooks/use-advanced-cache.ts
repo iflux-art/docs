@@ -357,6 +357,13 @@ export function useCache<T>(
     clearCache,
     prefetch: prefetchData,
     getCacheStats,
+    prefix: finalPrefix,
+    expiry: finalExpiry,
+    useMemoryCache: finalUseMemoryCache,
+    useLocalStorage: finalUseLocalStorage,
+    maxRetries: finalMaxRetries,
+    retryDelay: finalRetryDelay,
+    validator: finalValidator,
   };
 }
 

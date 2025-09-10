@@ -6,7 +6,6 @@ const TYPE_LABELS = {
   tool: "工具",
   link: "网址导航",
   docs: "文档",
-  blog: "文章",
   command: "命令",
   navigation: "网址导航",
   doc: "文档",
@@ -62,7 +61,6 @@ export const SearchResults = ({
           >
             <div className="mt-1 flex-shrink-0 text-muted-foreground">
               {result.type === "tool" && "🔧"}
-              {result.type === "blog" && "📝"}
               {result.type === "doc" && "📖"}
               {result.type === "link" && "🔗"}
               {result.type === "command" && "⚡"}

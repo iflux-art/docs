@@ -3,7 +3,7 @@
  * 提供统一的异步操作处理，包括错误处理和加载状态管理
  */
 
-import type { UseAsyncOptions } from "@/types";
+import type { UseAsyncOptions } from "@/types/async-types";
 import { logError, handleContentError, classifyError } from "@/lib/error";
 
 /**
@@ -53,7 +53,7 @@ export async function executeAsyncOperation<T>(
 
     // 使用专门的错误处理工具
     if (contentType) {
-      const errorInfo = handleContentError(error, contentType, contentId);
+      const errorInfo = handleContentError(error, contentType as "docs" | "links", contentId);
       errorMessage = errorInfo.message;
     } else {
       const errorInfo = {

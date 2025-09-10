@@ -1,6 +1,6 @@
 "use client";
 
-import type { Heading } from "@/features/navbar/types";
+import type { Heading } from "@/features/docs/types";
 import { useEffect, useState, useRef } from "react";
 
 export function useHeadingObserver(
@@ -84,7 +84,7 @@ export function useHeadingObserver(
           // 查找匹配文本内容的标题元素
           const headingElements = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
           headingElements.forEach(el => {
-            if (el.textContent?.trim() === heading.text) {
+            if (el.textContent?.trim() === heading.content) {
               if (!el.id) {
                 el.id = heading.id;
               }

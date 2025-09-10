@@ -14,66 +14,119 @@ const projectRoot = path.resolve(__dirname, '..');
 // 重构的store文件列表
 const STANDARD_STORE_FILES = [
   'app-store.standard.ts',
-  'blog-page-store.standard.ts',
-  'blog-store.standard.ts',
   'docs-global-structure-store.standard.ts',
   'docs-store.standard.ts',
   // 'friends-store.standard.ts',  // 已移除友链版块
   'layout-store.standard.ts',
-  'navbar-store.standard.ts',
-  'search-store.standard.ts',
-  'theme-store.standard.ts',
+  // 'navbar-store.standard.ts',  // 已移动到 src/features/navbar/stores/
+  // 'search-store.standard.ts',  // 已移动到 src/features/search/stores/
+  // 'theme-store.standard.ts',   // 已移动到 src/features/theme/
+];
+
+// 特殊处理的store文件
+const SPECIAL_STORE_FILES = [
+  { name: 'navbar-store.standard.ts', path: 'src/features/navbar/stores/' },
+  { name: 'search-store.standard.ts', path: 'src/features/search/stores/' },
+  { name: 'theme-store.standard.ts', path: 'src/features/theme/' }
 ];
 
 // 验证函数
-function validateStoreFile(fileName) {
-  const filePath = path.join(projectRoot, 'src', 'stores', fileName);
+function validateStoreFile(fileName, relativePath = 'src/stores/') {
+  const filePath = path.join(projectRoot, relativePath, fileName);
   
   // 检查文件是否存在
   if (!fs.existsSync(filePath)) {
-    console.error(`❌ 文件不存在: ${fileName}`);
+    console.error(`❌ 文件不存在: ${relativePath}${fileName}`);
     return false;
   }
   
   // 读取文件内容
   const content = fs.readFileSync(filePath, 'utf8');
   
-  // 检查必需的接口是否存在
+  // 对于搜索store，检查基本要求
+  if (fileName === 'search-store.standard.ts') {
+    const requiredElements = [
+      'export interface SearchState',
+      'export interface SearchActions',
+      'export type SearchDerivedState',
+      'export interface SearchStore',
+      'export const initialState',
+      'export const createSearchStore',
+      'export const useSearchStore',
+      'resetState:'
+    ];
+    
+    const missingElements = requiredElements.filter(element => !content.includes(element));
+    
+    if (missingElements.length > 0) {
+      console.error(`❌ ${relativePath}${fileName} 缺少元素: ${missingElements.join(', ')}`);
+      return false;
+    }
+    
+    console.log(`✅ ${relativePath}${fileName} 验证通过`);
+    return true;
+  }
+  
+  // 对于navbar store，检查基本要求
+  if (fileName === 'navbar-store.standard.ts') {
+    const requiredElements = [
+      'export interface NavbarState',
+      'export interface NavbarActions',
+      'export type NavbarDerivedState',
+      'export interface NavbarStore',
+      'export const initialState',
+      'export const createNavbarStore',
+      'export const useNavbarStore',
+      'resetState:'
+    ];
+    
+    const missingElements = requiredElements.filter(element => !content.includes(element));
+    
+    if (missingElements.length > 0) {
+      console.error(`❌ ${relativePath}${fileName} 缺少元素: ${missingElements.join(', ')}`);
+      return false;
+    }
+    
+    console.log(`✅ ${relativePath}${fileName} 验证通过`);
+    return true;
+  }
+  
+  // 其他store使用原始验证逻辑
   const requiredInterfaces = ['State', 'Actions', 'DerivedState', 'Store'];
   const missingInterfaces = requiredInterfaces.filter(interfaceName => 
     !content.includes(`export interface ${interfaceName}`)
   );
   
   if (missingInterfaces.length > 0) {
-    console.error(`❌ ${fileName} 缺少接口: ${missingInterfaces.join(', ')}`);
+    console.error(`❌ ${relativePath}${fileName} 缺少接口: ${missingInterfaces.join(', ')}`);
     return false;
   }
   
   // 检查initialState是否存在
   if (!content.includes('export const initialState')) {
-    console.error(`❌ ${fileName} 缺少 initialState`);
+    console.error(`❌ ${relativePath}${fileName} 缺少 initialState`);
     return false;
   }
   
   // 检查createStore函数是否存在
   if (!content.includes('export const createStore')) {
-    console.error(`❌ ${fileName} 缺少 createStore 函数`);
+    console.error(`❌ ${relativePath}${fileName} 缺少 createStore 函数`);
     return false;
   }
   
   // 检查默认导出是否存在
   if (!content.includes('export const use')) {
-    console.error(`❌ ${fileName} 缺少默认导出`);
+    console.error(`❌ ${relativePath}${fileName} 缺少默认导出`);
     return false;
   }
   
   // 检查resetState方法是否存在
   if (!content.includes('resetState:')) {
-    console.error(`❌ ${fileName} 缺少 resetState 方法`);
+    console.error(`❌ ${relativePath}${fileName} 缺少 resetState 方法`);
     return false;
   }
   
-  console.log(`✅ ${fileName} 验证通过`);
+  console.log(`✅ ${relativePath}${fileName} 验证通过`);
   return true;
 }
 
@@ -91,10 +144,19 @@ for (const file of STANDARD_STORE_FILES) {
   }
 }
 
+// 验证特殊处理的store文件
+for (const specialStore of SPECIAL_STORE_FILES) {
+  if (validateStoreFile(specialStore.name, specialStore.path)) {
+    passed++;
+  } else {
+    failed++;
+  }
+}
+
 console.log(`\n验证完成:`);
 console.log(`✅ 通过: ${passed}`);
 console.log(`❌ 失败: ${failed}`);
-console.log(`总计: ${STANDARD_STORE_FILES.length}`);
+console.log(`总计: ${STANDARD_STORE_FILES.length + SPECIAL_STORE_FILES.length}`);
 
 if (failed > 0) {
   process.exit(1);

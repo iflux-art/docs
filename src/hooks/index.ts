@@ -4,7 +4,7 @@
 
 // 核心Hooks
 export { useMounted } from "./use-mounted";
-export { useResponsiveLayout } from "./use-responsive-layout";
+export { useResponsiveLayout } from "@/features/layout/use-responsive-layout";
 export { useRoutePrefetch } from "./use-route-prefetch";
 export { useHeadingObserver } from "./use-heading-observer";
 export { useContentData } from "./use-content-data";

@@ -42,8 +42,6 @@ function checkStoreUsage() {
   const storeNames = [
     'useAppStore',
     'useAuthStore',
-    'useBlogPageStore',
-    'useBlogStore',
     'useDocsGlobalStructureStore',
     'useDocsStore',
     'useFriendsStore',

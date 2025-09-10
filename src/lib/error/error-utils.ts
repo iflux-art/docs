@@ -202,11 +202,11 @@ export function logError(errorInfo: ErrorInfo, options: LogOptions = {}): void {
 
 /**
  * 内容加载错误处理器
- * 专门处理博客、文档等内容加载错误
+ * 专门处理文档等内容加载错误
  */
 export function handleContentError(
   error: unknown,
-  contentType: "blog" | "docs" | "links",
+  contentType: "docs" | "links",
   contentId?: string
 ): ErrorInfo {
   // 获取更多上下文信息

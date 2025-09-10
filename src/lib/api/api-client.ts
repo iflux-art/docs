@@ -3,7 +3,7 @@
  * 提供标准化的API请求处理，包括错误处理、重试机制、缓存等
  */
 
-import type { UseAsyncOptions } from "@/types";
+import type { UseAsyncOptions } from "@/types/async-types";
 import { executeAsyncOperation, executeWithRetry } from "@/utils/async";
 import { handleNetworkError, logError, classifyError } from "@/lib/error";
 
@@ -181,7 +181,7 @@ export class ApiClient {
           setLoading: config.setLoading,
           setError: config.setError,
           onSuccess: config.onSuccess,
-          onError: error => {
+          onError: (error: unknown) => {
             // 使用统一的网络错误处理
             handleNetworkError(error, url);
             if (config.onError) {
@@ -198,7 +198,7 @@ export class ApiClient {
       setLoading: config.setLoading,
       setError: config.setError,
       onSuccess: config.onSuccess,
-      onError: error => {
+      onError: (error: unknown) => {
         // 使用统一的网络错误处理
         handleNetworkError(error, url);
         if (config.onError) {

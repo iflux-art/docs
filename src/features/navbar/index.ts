@@ -11,23 +11,25 @@ export {
   NavLink,
   ActiveLink,
   NavListMenu,
-  HamburgerMenu,
-  NavCardMenu,
+  // 移除了 HamburgerMenu 和 NavCardMenu 的导出
 } from "./components";
 
 // Hooks 导出
 export { useNavbarScroll, useActiveSection } from "./hooks";
 
+// Store 导出
+export { useNavbarStore } from "./stores/navbar-store.standard";
+
 // 类型导出
 export type {
-  BreadcrumbItem,
-  Heading,
-  SidebarItem,
-  SidebarProps,
   BaseNavItem,
-  NestedNavItem,
-  BaseSearchResult,
-  NavbarSearchResult,
+  ExtendedNavItem,
+  ScrollDirection,
+  NavbarState,
+  NavbarActions,
+  NavbarStore,
+  NavContentType,
+  NavContentItem,
 } from "./types";
 
 // 配置和类型导出

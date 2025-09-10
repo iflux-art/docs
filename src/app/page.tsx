@@ -1,34 +1,57 @@
-import dynamicImport from "next/dynamic";
 import type { Metadata } from "next";
-import { HOME_PAGE_METADATA } from "@/config";
+import { LinkCard } from "@/components/ui/link-card";
+import { DocPageLayout } from "@/features/docs/components";
+import { DocsSidebarCard } from "@/features/docs/components";
+import { ThreeColumnLayout } from "@/features/layout";
+import { getAllDocsStructure } from "@/features/docs/components";
 
-// 启用自动缓存策略
-export const dynamic = "force-static";
+/**
+ * 首页元数据配置
+ */
+const HOME_PAGE_METADATA: Metadata = {
+  title: "斐流艺创",
+  description: "斐流艺创项目文档和使用指南",
+  openGraph: {
+    title: "斐流艺创",
+    description: "斐流艺创项目文档和使用指南",
+    type: "website",
+  },
+};
 
-// 设置60秒重新验证
-export const revalidate = 60;
+/**
+ * 生成首页元数据
+ */
+export function generateMetadata(): Metadata {
+  return HOME_PAGE_METADATA;
+}
 
-// 页面元数据
-export const metadata: Metadata = HOME_PAGE_METADATA;
+export default function HomePage() {
+  // 获取文档结构数据
+  const structure = getAllDocsStructure();
 
-// 使用动态导入来加载客户端组件，并添加预加载策略
-const HeroSection = dynamicImport(
-  () => import("@/features/home/components").then(mod => mod.HeroSection),
-  {
-    ssr: true, // 启用服务端渲染
-    loading: () => (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    ),
-  }
-);
+  // 过滤掉index页面，只保留分类
+  const categories = structure.categories;
 
-export default function Home() {
+  // 左侧边栏内容 - 文档导航
+  const leftSidebar = <DocsSidebarCard showHeader={false} />;
+
   return (
-    <div className="flex h-full flex-col">
-      {/* Hero区域 */}
-      <HeroSection />
-    </div>
+    <DocPageLayout>
+      <ThreeColumnLayout leftSidebar={leftSidebar}>
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {categories.map(category => (
+              <LinkCard
+                key={category.id}
+                title={category.title}
+                description={category.description}
+                href={`/${category.id}`}
+                isExternal={false}
+              />
+            ))}
+          </div>
+        </div>
+      </ThreeColumnLayout>
+    </DocPageLayout>
   );
 }

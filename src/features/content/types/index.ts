@@ -1,7 +1,7 @@
 /**
  * 内容相关公共类型定义
  *
- * 包含被博客和文档等多个功能模块共享使用的内容类型
+ * 包含被文档等多个功能模块共享使用的内容类型
  */
 
 // ==================== 基础类型定义（原 src/types/content-types.ts 内容）====================
@@ -104,7 +104,7 @@ export interface ContentSearchResult {
   /** 摘要 */
   excerpt: string;
   /** 类型 */
-  type: "blog" | "doc" | "page";
+  type: "doc" | "page";
 }
 
 /** 内容搜索参数 */
@@ -114,7 +114,7 @@ export interface ContentSearchParams {
   /** 搜索限制 */
   limit?: number;
   /** 搜索类型 */
-  type?: "blog" | "doc" | "all";
+  type?: "doc" | "all";
 }
 
 /** 内容统计信息 */

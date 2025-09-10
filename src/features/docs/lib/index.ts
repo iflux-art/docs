@@ -11,7 +11,7 @@ import type {
   NavDocItem,
   SidebarItem,
 } from "@/features/docs/types";
-import type { BreadcrumbItem } from "@/features/navbar/types";
+import type { BreadcrumbItem } from "@/components/breadcrumb";
 import { sync as globSync } from "glob";
 import matter from "gray-matter";
 import { getDocContent } from "./doc-content";
@@ -28,6 +28,18 @@ export {
 
 // 从全局helpers导出字数统计函数
 export { countWords } from "./word-count";
+
+// 从面包屑模块导出类型
+export type { BreadcrumbItem } from "@/components/breadcrumb";
+
+/** 面包屑项 */
+// 已移动到 src/components/breadcrumb.tsx 中集中管理
+// export interface BreadcrumbItem {
+//   /** 面包屑标签 */
+//   label: string;
+//   /** 面包屑链接 */
+//   href?: string;
+// }
 
 interface DocMetaItem {
   title: string;
@@ -65,7 +77,7 @@ function getTitleFromMeta(meta: Record<string, unknown>, key: string): string | 
  * 获取目录 title（优先 _meta.json 的 title 字段，没有则 fallback slug）
  */
 export function getDirectoryTitle(dirSlug: string[]): string {
-  const docsDir = path.join(process.cwd(), "src", "content", "docs");
+  const docsDir = path.join(process.cwd(), "src", "content");
   if (dirSlug.length === 0) return "文档";
 
   // 上级目录 _meta.json
@@ -137,7 +149,7 @@ function findFirstDocFromFiles(docsDir: string, dirSlug: string[]): string[] | n
  * 优先 _meta.json 顺序，否则按文件名排序
  */
 export function getFirstDocInDirectory(dirSlug: string[]): string[] | null {
-  const docsDir = path.join(process.cwd(), "src", "content", "docs", ...dirSlug);
+  const docsDir = path.join(process.cwd(), "src", "content", ...dirSlug);
 
   // 1. 优先 _meta.json 顺序
   const metaPath = path.join(docsDir, "_meta.json");
@@ -160,7 +172,7 @@ export function createDocBreadcrumbsServer(
 ): BreadcrumbItem[] {
   const items: BreadcrumbItem[] = [];
   // 根目录
-  items.push({ label: getDirectoryTitle([]), href: "/docs" });
+  items.push({ label: getDirectoryTitle([]), href: "/" });
   for (let i = 0; i < slug.length; i++) {
     const dir = slug.slice(0, i + 1);
     const isLast = i === slug.length - 1;
@@ -169,7 +181,7 @@ export function createDocBreadcrumbsServer(
     if (!isLast) {
       const firstDoc = getFirstDocInDirectory(dir);
       if (firstDoc) {
-        items.push({ label, href: `/docs/${firstDoc.join("/")}` });
+        items.push({ label, href: `/${firstDoc.join("/")}` });
       } else {
         items.push({ label });
       }
@@ -319,7 +331,7 @@ function createDocCategory(
  * 获取文档分类
  */
 export function getDocCategories(): DocCategory[] {
-  const docsDir = path.join(process.cwd(), "src", "content", "docs");
+  const docsDir = path.join(process.cwd(), "src", "content");
   if (!fs.existsSync(docsDir)) return [];
 
   const categories: DocCategory[] = [];
@@ -399,7 +411,7 @@ function collectDocsFromCategory(category: fs.Dirent, docsDir: string): DocListI
  * 获取最新文档
  */
 export function getRecentDocs(limit = 4): DocListItem[] {
-  const docsDir = path.join(process.cwd(), "src", "content", "docs");
+  const docsDir = path.join(process.cwd(), "src", "content");
   if (!fs.existsSync(docsDir)) return [];
 
   const allDocs: DocListItem[] = [];
@@ -546,9 +558,8 @@ function createDirectoryItem(params: CreateItemParams): SidebarItem {
     params;
   const children = getDocDirectoryStructure(rootDocsDir, itemFsRelativePath);
   const normalizedRelativePath = currentRelativePath.replace(/\\/g, "/");
-  const defaultHref = `/docs/${
-    normalizedRelativePath ? `${normalizedRelativePath}/` : ""
-  }${itemName}`;
+  // 移除 /docs 前缀，因为我们已经将路由提升到根路径
+  const defaultHref = `/${normalizedRelativePath ? `${normalizedRelativePath}/` : ""}${itemName}`;
 
   return {
     title: itemSpecificConfig.title ?? itemName,
@@ -572,9 +583,8 @@ function createFileItem(params: CreateItemParams): SidebarItem {
   const { itemName, itemSpecificConfig, itemFsRelativePath, rootDocsDir, currentRelativePath } =
     params;
   const normalizedRelativePath = currentRelativePath.replace(/\\/g, "/");
-  const defaultHref = `/docs/${
-    normalizedRelativePath ? `${normalizedRelativePath}/` : ""
-  }${itemName}`;
+  // 移除 /docs 前缀，因为我们已经将路由提升到根路径
+  const defaultHref = `/${normalizedRelativePath ? `${normalizedRelativePath}/` : ""}${itemName}`;
 
   let title = itemSpecificConfig.title ?? itemName;
   if (!itemSpecificConfig.title) {
@@ -597,7 +607,7 @@ function createFileItem(params: CreateItemParams): SidebarItem {
 
 /**
  * 获取文档目录结构 (核心函数，用于 Sidebar 和上下翻页)
- * @param rootDocsDir - e.g., path.join(process.cwd(), 'src', 'content', 'docs')
+ * @param rootDocsDir - e.g., path.join(process.cwd(), 'src', 'content')
  * @param currentRelativePath - e.g., 'category' or 'category/subcategory'
  * @returns Array of SidebarItem, sorted according to rules.
  */
@@ -659,7 +669,7 @@ export function getDocDirectoryStructure(
  * @returns An array of SidebarItem objects for the specified category.
  */
 export function getDocSidebar(category: string): SidebarItem[] {
-  const docsContentDir = path.join(process.cwd(), "src", "content", "docs");
+  const docsContentDir = path.join(process.cwd(), "src", "content");
   // The initial call to getDocDirectoryStructure uses the category name as the currentRelativePath
   try {
     const result = getDocDirectoryStructure(docsContentDir, category);
@@ -695,14 +705,14 @@ function processItemWithChildren(
  */
 function processPageItem(
   item: SidebarItem,
-  topLevelCategory: string,
+  _topLevelCategory: string,
   flatList: NavDocItem[]
 ): void {
   if (item.type === "page" || (item.type === "menu" && item.href)) {
-    // Ensure path starts with /docs/ and normalize
+    // Ensure path starts with / and normalize (remove /docs/ prefix)
     let itemPath = item.href;
-    if (itemPath && !itemPath.startsWith("/docs/")) {
-      itemPath = `/docs/${topLevelCategory}/${itemPath.replace(/^\//, "")}`;
+    if (itemPath && !itemPath.startsWith("/")) {
+      itemPath = `/${itemPath}`;
     }
     if (itemPath) {
       itemPath = itemPath.replace(/\\/g, "/");

@@ -1,74 +1,80 @@
-import { ThreeColumnLayout } from "@/components/layout";
-import { TableOfContentsCard } from "@/features/navigation";
-import ClientMDXRenderer from "@/features/content/components/mdx/client-mdx-renderer";
+import { ThreeColumnLayout } from "@/features/layout";
+import { Breadcrumb } from "@/components/breadcrumb";
+import { TableOfContentsCard } from "@/features/toc";
+import { ClientMDXRenderer } from "@/features/mdx";
 import { TwikooComment } from "@/features/comment";
-import { ContentDisplay } from "@/features/content/components/display";
-import { DocPagination } from "@/features/navigation";
+import { ContentDisplay } from "@/components/content-display";
+import { DocPagination } from "@/components";
 import { DocsSidebarCard } from "@/features/docs/components";
-import { createDocBreadcrumbsServer, getDocContentFromFeatures } from "@/features/docs/lib";
-import { isRedirectLoop, resolveDocPath } from "@/features/docs/lib/doc-path-resolver";
-import type { DocContentResult } from "@/features/docs/types";
-import { redirect } from "next/navigation";
-import { DocErrorHandler } from "./doc-error-handler";
+import type { Heading, NavDocItem } from "@/features/docs/types";
+import { createDocBreadcrumbsServer } from "@/features/docs/lib";
+import type { BreadcrumbItem } from "@/components/breadcrumb";
 
 interface DocPageContainerProps {
-  slug: string[];
+  doc: {
+    frontmatter: {
+      title: string;
+      description?: string;
+    };
+    content: string;
+    headings: Heading[];
+    date?: string | null;
+    update?: string | null;
+    wordCount?: number;
+    prevDoc?: NavDocItem | null;
+    nextDoc?: NavDocItem | null;
+  };
+  breadcrumbs?: BreadcrumbItem[];
+  currentDocPath: string;
+  showSidebarHeader?: boolean;
 }
 
 /**
  * 文档页面容器组件
- * 负责处理文档内容的获取、渲染和布局
+ *
+ * 用于包装文档页面内容，提供统一的布局和样式
  */
-export const DocPageContainer = ({ slug }: DocPageContainerProps) => {
-  // 路径解析和重定向处理
-  const pathResolution = resolveDocPath(slug);
-
-  // 处理重定向情况
-  if (pathResolution.type === "redirect" && pathResolution.redirectTo) {
-    const currentPath = `/docs/${slug.join("/")}`;
-    if (isRedirectLoop(currentPath, pathResolution.redirectTo)) {
-      return <DocErrorHandler errorType="redirect-loop" slug={slug} />;
-    }
-    redirect(pathResolution.redirectTo);
-  }
-
-  // 处理未找到的情况
-  if (pathResolution.type === "notfound") {
-    return <DocErrorHandler errorType="not-found" slug={slug} />;
-  }
-
-  // 获取文档内容
-  let doc: DocContentResult;
-  try {
-    doc = getDocContentFromFeatures(slug);
-  } catch (error) {
-    return <DocErrorHandler errorType="content-error" slug={slug} error={error as Error} />;
-  }
-
+export function DocPageContainer({
+  doc,
+  breadcrumbs,
+  currentDocPath,
+  showSidebarHeader = true,
+}: DocPageContainerProps) {
   // 生成面包屑导航
-  const breadcrumbs = createDocBreadcrumbsServer(slug, doc.frontmatter.title);
+  const breadcrumbItems = breadcrumbs ?? createDocBreadcrumbsServer(currentDocPath.split("/"));
 
-  // 左侧边栏内容
-  const leftSidebar = <DocsSidebarCard currentDoc={`/docs/${slug.join("/")}`} />;
+  // 左侧边栏内容 - 文档导航
+  const leftSidebar = (
+    <DocsSidebarCard currentDoc={currentDocPath} showHeader={showSidebarHeader} />
+  );
 
-  // 右侧边栏内容
+  // 右侧边栏内容 - 目录导航
   const rightSidebar = <TableOfContentsCard headings={doc.headings} className="prose-sm" />;
 
   return (
-    <div className="min-h-screen bg-background">
-      <ThreeColumnLayout leftSidebar={leftSidebar} rightSidebar={rightSidebar}>
+    <ThreeColumnLayout leftSidebar={leftSidebar} rightSidebar={rightSidebar}>
+      {/* 面包屑导航 */}
+      <Breadcrumb items={breadcrumbItems} className="mb-4" />
+
+      {/* 文档主内容 */}
+      <div className="space-y-6">
+        {/* 文档内容展示 */}
         <ContentDisplay
           contentType="docs"
           title={doc.frontmatter.title}
-          date={doc.date}
+          date={doc.date ?? undefined}
+          updatedAt={doc.update ?? undefined}
           wordCount={doc.wordCount}
-          breadcrumbs={breadcrumbs}
         >
           <ClientMDXRenderer content={doc.content} />
         </ContentDisplay>
+
+        {/* 文档分页导航 */}
         <DocPagination prevDoc={doc.prevDoc} nextDoc={doc.nextDoc} />
+
+        {/* 评论区 */}
         <TwikooComment />
-      </ThreeColumnLayout>
-    </div>
+      </div>
+    </ThreeColumnLayout>
   );
-};
+}

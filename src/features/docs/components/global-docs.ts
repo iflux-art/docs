@@ -9,7 +9,7 @@ import { getDocCategories, getDocDirectoryStructure } from "@/features/docs/lib"
 import type { DocCategory, SidebarItem } from "@/features/docs/types";
 
 // 常量定义
-const DOCS_CONTENT_DIR = path.join(process.cwd(), "src", "content", "docs");
+const DOCS_CONTENT_DIR = path.join(process.cwd(), "src", "content");
 const DOCS_INDEX_FILES = ["index.mdx", "index.md"];
 
 /**
@@ -64,7 +64,7 @@ export function getAllDocsStructure(): GlobalDocsStructure {
     // 确定第一个文档路径
     let categoryFirstDocPath = "";
     if (hasIndex) {
-      categoryFirstDocPath = `/docs/${category.id}`;
+      categoryFirstDocPath = `/${category.id}`;
     } else if (firstDoc) {
       categoryFirstDocPath = firstDoc;
     }
@@ -84,7 +84,7 @@ export function getAllDocsStructure(): GlobalDocsStructure {
 
   return {
     categories: categoriesWithDocs,
-    firstDocPath: firstDocPath || "/docs",
+    firstDocPath: firstDocPath || "/",
     totalDocs,
   };
 }
@@ -127,7 +127,7 @@ export function resolveDocumentPath(slugPath: string[]): DocPathResolution {
     if (fs.existsSync(mdxPath) || fs.existsSync(mdPath)) {
       return {
         type: "document",
-        targetPath: `/docs/${requestedPath}`,
+        targetPath: `/${requestedPath}`,
       };
     }
 
@@ -139,7 +139,7 @@ export function resolveDocumentPath(slugPath: string[]): DocPathResolution {
   if (stats.isFile()) {
     return {
       type: "document",
-      targetPath: `/docs/${requestedPath}`,
+      targetPath: `/${requestedPath}`,
     };
   }
 
@@ -150,7 +150,7 @@ export function resolveDocumentPath(slugPath: string[]): DocPathResolution {
       if (fs.existsSync(indexPath)) {
         return {
           type: "document",
-          targetPath: `/docs/${requestedPath}`,
+          targetPath: `/${requestedPath}`,
           isIndex: true,
         };
       }

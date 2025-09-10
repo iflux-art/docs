@@ -3,7 +3,8 @@
  */
 
 // 组件导出
-export { Greeting, TwikooComment } from "./components";
+export { Greeting } from "./greeting";
+export { TwikooComment } from "./twikoo-comment";
 
 // 类型导出
 export type { GreetingProps, TimeSlot } from "./types";
@@ -13,4 +14,4 @@ export {
   GREETINGS_BY_TIME,
   getCurrentTimeSlot,
   getRandomGreeting,
-} from "./lib";
+} from "./greetings";

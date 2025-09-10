@@ -2,10 +2,7 @@
  * 文档类型定义 - 优化合并版
  */
 
-import type { Heading } from "@/features/navbar/types";
-
 // ================= 文档内容相关类型 =================
-// 注意：Heading 类型已移动到 @/features/content/types
 
 /** 文档分类 */
 export interface DocCategory {
@@ -57,6 +54,18 @@ export function toDocFrontmatter<T extends Record<string, unknown>>(obj: T): Doc
     ...obj,
     title: (obj.title as string) ?? "",
   } as DocFrontmatter;
+}
+
+/** 文档标题 */
+export interface Heading {
+  /** 标题ID */
+  id: string;
+  /** 标题文本 */
+  text: string;
+  /** 标题内容 */
+  content: string;
+  /** 标题级别 */
+  level: number;
 }
 
 export interface DocItem extends DocContentBase {

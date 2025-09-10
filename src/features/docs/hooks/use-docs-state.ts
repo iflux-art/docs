@@ -78,7 +78,7 @@ export function useDocsState(): UseDocsStateReturn {
     void executeAsyncOperation(operation, {
       setLoading,
       setError,
-      onSuccess: mockCategories => {
+      onSuccess: (mockCategories: DocCategory[]) => {
         // 更新 Zustand 状态
         setCategories(mockCategories);
       },
@@ -111,7 +111,12 @@ export function useDocsState(): UseDocsStateReturn {
       void executeAsyncOperation(operation, {
         setLoading,
         setError,
-        onSuccess: mockDoc => {
+        onSuccess: (mockDoc: {
+          title: string;
+          content: string;
+          frontmatter: { title: string; description: string };
+          headings: never[];
+        }) => {
           // 更新当前文档状态
           setCurrentDoc({
             title: mockDoc.title,

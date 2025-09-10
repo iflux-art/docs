@@ -18,11 +18,11 @@ export {
   MDXBlockquote,
   MDXCode,
   MDXPre,
-} from "./mdx";
+} from "@/features/mdx";
 
 // 内容展示组件
-export { ContentDisplay, DocPagination } from "./display";
+export { ContentDisplay } from "@/components/content-display";
 
 // 代码高亮组件
-export { CodeBlock } from "./code";
-export type { CodeBlockProps } from "./code";
+export { CodeBlock } from "@/features/mdx/code";
+export type { CodeBlockProps } from "@/features/mdx/code";

@@ -26,24 +26,17 @@ export type {
   MiddlewareResult,
 } from "./api-middleware";
 export {
-  withLogging,
   withValidation,
-  withCORS,
   withRateLimit,
   runMiddleware,
-  withPublicApi,
 } from "./api-middleware";
 
 // 从 api-paths 导出
 // API路径常量
 export {
   API_PATHS,
-  // BLOG_API_PATHS,  // 已移除 blog 版块
   CONTENT_API_PATHS,
-  NOTIFICATION_API_PATHS,
   SEARCH_API_PATHS,
-  USER_API_PATHS,
-  ANALYTICS_API_PATHS,
 } from "./api-paths";
 
 // 从 cache-utils 导出

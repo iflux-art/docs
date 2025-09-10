@@ -6,7 +6,7 @@ import matter from "gray-matter";
 import { getFlattenedDocsOrder } from "./doc-paths";
 import { countWords } from "./word-count";
 
-const DOCS_CONTENT_DIR = "src/content/docs";
+const DOCS_CONTENT_DIR = "src/content";
 const DOCS_INDEX_FILES = ["index.mdx", "index.md"];
 const DOC_CACHE_TTL = 10 * 60 * 1000; // 10分钟缓存
 const MAX_CACHE_SIZE = 500; // 最大缓存条目数
@@ -122,7 +122,7 @@ function getNavigationDocs(
   flattenedDocs: NavDocItem[]
 ): { prevDoc: NavDocItem | null; nextDoc: NavDocItem | null } {
   if (isIndexPage) {
-    const indexDirNavPath = `/docs/${actualSlugForNav}`;
+    const indexDirNavPath = `/${actualSlugForNav}`;
     const nextDoc =
       flattenedDocs.find(
         doc =>
@@ -134,7 +134,7 @@ function getNavigationDocs(
 
     return { prevDoc: null, nextDoc };
   } else {
-    const currentNavPath = `/docs/${actualSlugForNav}`;
+    const currentNavPath = `/${actualSlugForNav}`;
     const currentIndex = flattenedDocs.findIndex(doc => doc.path === currentNavPath);
 
     if (currentIndex === -1) {

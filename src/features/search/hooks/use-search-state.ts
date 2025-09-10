@@ -6,7 +6,7 @@
 import { getSearchSuggestions, performSearch } from "@/features/search/lib/search-engine";
 import type { SearchOptions, SearchResult } from "@/features/search/types";
 import { useCallback, useEffect, useState } from "react";
-import { useSearchStore } from "@/stores";
+import { useSearchStore } from "../stores/search-store.standard";
 
 interface UseSearchStateReturn {
   search: (query: string, options?: SearchOptions) => Promise<void>;

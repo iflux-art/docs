@@ -56,7 +56,7 @@ export function useGlobalDocs(): UseGlobalDocsResult {
         return;
       }
 
-      const response = await fetch("/api/docs/global-structure");
+      const response = await fetch("/api/docs-global-structure");
 
       if (!response.ok) {
         throw new Error(`Failed to fetch global docs structure: ${response.statusText}`);

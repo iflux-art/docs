@@ -1,5 +1,5 @@
 import type { BaseNavItem } from "@/features/navbar/types";
-import { FileText, type LucideIcon } from "lucide-react";
+import { FileText, Link, MapPin, PenTool, type LucideIcon } from "lucide-react";
 
 /**
  * 导航配置项接口
@@ -17,17 +17,36 @@ export interface NavConfigItem extends BaseNavItem {
 
 export const NAV_ITEMS = [
   {
+    key: "blog",
+    label: "博客",
+    description: "查看我们的技术博客，了解最新动态和深度文章",
+    icon: PenTool,
+    href: "https://blog.iflux.art/",
+    external: true,
+  },
+  {
     key: "docs",
     label: "文档",
     description: "查看详细的文档和指南，了解如何使用我们的产品和服务",
     icon: FileText,
+    href: "/", // 修改为指向首页
   },
-  // {  // 已移除友链版块
-  //   key: "friends",
-  //   label: "友链",
-  //   description: "探索我们的合作伙伴和友情链接，发现更多优质资源",
-  //   icon: Link,
-  // },
+  {
+    key: "nav",
+    label: "导航",
+    description: "查看网站导航和资源聚合",
+    icon: MapPin,
+    href: "https://nav.iflux.art/",
+    external: true,
+  },
+  {
+    key: "friends",
+    label: "友链",
+    description: "探索我们的合作伙伴和友情链接，发现更多优质资源",
+    icon: Link,
+    href: "https://blog.iflux.art/friends/",
+    external: true,
+  },
 ] as const;
 
 // 扁平化所有导航项（包括子项）以便路径映射
@@ -45,8 +64,7 @@ const flattenNavItems = (items: readonly NavConfigItem[]): NavConfigItem[] => {
 const FLAT_NAV_ITEMS: NavConfigItem[] = flattenNavItems(NAV_ITEMS);
 
 export const NAV_PATHS: Record<string, string> = {
-  docs: "/docs",
-  // friends: "/friends",  // 已移除友链版块
+  docs: "/", // 修改为指向首页
 } as const;
 
 /**

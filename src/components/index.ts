@@ -4,7 +4,7 @@
  * 业务相关组件已移动到对应的 features 目录中
  */
 
-// ==================== MDX 组件 ====================
+// MDX 组件导出
 export {
   ClientMDXRenderer,
   MDXComponents,
@@ -12,14 +12,33 @@ export {
   MDXLink,
   MDXBlockquote,
   MDXCode,
-} from "@/features/content/components/mdx";
+  MDXPre,
+} from "@/features/mdx";
+
+// 代码高亮组件导出
+export { CodeBlock } from "@/features/mdx/code";
+export type { CodeBlockProps } from "@/features/mdx/code";
 
 // ==================== 主题提供者 ====================
-export { ThemeProvider } from "./theme/theme-provider";
+// 已移动到 src/features/theme 目录下集中管理
+export { ThemeProvider } from "@/features/theme";
+
+// ==================== 面包屑组件 ====================
+export { Breadcrumb } from "./breadcrumb";
+
+// ==================== 内容展示组件 ====================
+export { ContentDisplay } from "./content-display";
+export type { ContentDisplayProps, ContentType } from "./content-display";
+
+// ==================== 分页组件 ====================
+export { DocPagination } from "./pagination";
 
 // ==================== 业务按钮组件 ====================
 export { GitHubButton } from "./button/github-button";
 export { TravelButton } from "./button/travel-button";
+
+// ==================== 页脚组件 ====================
+export { Footer } from "./footer";
 
 // ==================== UI 组件库 ====================
 export { BackButton } from "./ui/back-button";

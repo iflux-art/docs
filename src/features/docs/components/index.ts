@@ -20,5 +20,9 @@ export { DocsHomePage } from "./docs-home-page";
 // 文档页面容器组件
 export { DocPageContainer } from "./doc-page-container";
 
+// 文档内容展示组件
+export { DocContentDisplay } from "./doc-content-display";
+export { DocPageLayout } from "./doc-page-layout";
+
 // 文档错误处理组件
 export { DocErrorHandler } from "./doc-error-handler";

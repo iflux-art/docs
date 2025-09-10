@@ -17,7 +17,7 @@ export { createResetFunction } from "./store";
 
 // ==================== 工具函数 ====================
 // 从统一的类型定义中导出 TocHeading
-export type { TocHeading } from "@/types/props-types";
+export type { TocHeading } from "@/features/toc/types";
 
 // ==================== 验证工具函数 ====================
 export { isValidUrl, validateRequiredFields } from "./validation";

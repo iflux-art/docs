@@ -1,104 +1,74 @@
-import { ThreeColumnLayout } from "@/components/layout";
-import { TableOfContentsCard } from "@/features/navigation";
-import ClientMDXRenderer from "@/features/content/components/mdx/client-mdx-renderer";
-import { TwikooComment } from "@/features/comment";
-import { ContentDisplay } from "@/features/content/components/display";
-import { DocPagination } from "@/features/navigation";
-import { DocsSidebarCard, getAllDocsStructure } from "@/features/docs/components";
-import { createDocBreadcrumbsServer, getDocContentFromFeatures } from "@/features/docs/lib";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { ThreeColumnLayout } from "@/features/layout";
+import { Breadcrumb } from "@/components/breadcrumb";
+import { DocsSidebarCard } from "@/features/docs/components";
+import { DocsSidebar, getAllDocsStructure } from "@/features/docs/components";
+import { ContentDisplay } from "@/components/content-display";
+import { DocPagination } from "@/components";
+import type { NavDocItem } from "@/features/docs/types";
+import type { BreadcrumbItem } from "@/components/breadcrumb";
 
-/**
- * 获取第一个文档内容
- */
-function getFirstDocContent(): ReturnType<typeof getDocContentFromFeatures> | null {
-  try {
-    const structure = getAllDocsStructure();
-
-    if (!structure?.firstDocPath || structure.totalDocs === 0) {
-      return null;
-    }
-
-    const firstDocPath = structure.firstDocPath.replace(/^\/docs\//, "");
-    const slug = firstDocPath.split("/");
-
-    return getDocContentFromFeatures(slug);
-  } catch (error) {
-    console.error("Error getting first doc content:", error as Error);
-    return null;
-  }
+interface DocsHomePageProps {
+  firstDoc?: NavDocItem | null;
 }
 
 /**
- * 文档首页容器组件
+ * 文档首页组件
  *
- * 从原始 docs 页面中拆分的业务逻辑，负责处理文档结构验证、
- * 内容获取和渲染。遵循项目架构分离原则。
+ * 展示文档系统首页内容，包括导航和第一个文档内容
  */
-export function DocsHomePage() {
-  try {
-    const structure = getAllDocsStructure();
+export function DocsHomePage({ firstDoc }: DocsHomePageProps) {
+  // 获取文档结构
+  const structure = getAllDocsStructure();
 
-    // 验证结构和路径
-    if (!structure?.firstDocPath || structure.totalDocs === 0) {
-      return (
-        <div className="min-h-screen bg-background">
-          <div className="container mx-auto py-8">
-            <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-              <h1 className="mb-4 text-3xl font-bold text-destructive">文档不可用</h1>
-              <p className="mb-6 max-w-md text-muted-foreground">
-                当前没有可用的文档内容。请检查文档配置或联系管理员。
-              </p>
-              <Link
-                href="/"
-                className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-              >
-                返回首页
-              </Link>
-            </div>
+  // 左侧边栏内容 - 文档导航
+  const leftSidebar = <DocsSidebarCard currentDoc="" showHeader={true} />;
+
+  // 右侧边栏内容 - 空白占位
+  const rightSidebar = <div className="h-full" />;
+
+  // 面包屑导航项
+  const breadcrumbItems: BreadcrumbItem[] = [
+    {
+      label: "文档",
+      href: "/docs",
+    },
+  ];
+
+  return (
+    <ThreeColumnLayout leftSidebar={leftSidebar} rightSidebar={rightSidebar}>
+      {/* 面包屑导航 */}
+      <Breadcrumb items={breadcrumbItems} className="mb-4" />
+
+      {/* 文档主内容 */}
+      <div className="space-y-6">
+        {/* 文档内容展示 */}
+        <ContentDisplay contentType="docs" title="文档中心">
+          <div className="prose prose-gray dark:prose-invert">
+            <p>欢迎来到斐流艺创文档中心，这里包含了项目的所有文档和使用指南。</p>
+            <h2>开始使用</h2>
+            <p>如果您是第一次使用斐流艺创，建议从以下文档开始：</p>
+            <ul>
+              <li>
+                <a href="/getting-started">快速开始指南</a> - 了解如何快速上手使用项目
+              </li>
+              <li>
+                <a href="/project">项目介绍</a> - 了解项目的背景、目标和功能
+              </li>
+              <li>
+                <a href="/features">核心功能模块</a> - 了解项目提供的核心功能
+              </li>
+            </ul>
+            <h2>文档结构</h2>
+            <p>文档按照以下分类组织：</p>
           </div>
-        </div>
-      );
-    }
+        </ContentDisplay>
 
-    // 获取第一个文档的内容
-    const doc = getFirstDocContent();
+        {/* 文档结构展示 */}
+        <DocsSidebar structure={structure} currentDoc="" />
 
-    if (!doc) {
-      notFound();
-    }
-
-    // 从 firstDocPath 中提取 slug 用于面包屑
-    const firstDocPath = structure.firstDocPath.replace(/^\/docs\//, "");
-    const slug = firstDocPath.split("/");
-    const breadcrumbs = createDocBreadcrumbsServer(slug, doc.frontmatter.title);
-
-    // 左侧边栏内容
-    const leftSidebar = <DocsSidebarCard currentDoc={structure.firstDocPath} />;
-
-    // 右侧边栏内容
-    const rightSidebar = <TableOfContentsCard headings={doc.headings} className="prose-sm" />;
-
-    return (
-      <div className="min-h-screen bg-background">
-        <ThreeColumnLayout leftSidebar={leftSidebar} rightSidebar={rightSidebar}>
-          <ContentDisplay
-            contentType="docs"
-            title={doc.frontmatter.title}
-            date={doc.date}
-            wordCount={doc.wordCount}
-            breadcrumbs={breadcrumbs}
-          >
-            <ClientMDXRenderer content={doc.content} />
-          </ContentDisplay>
-          <DocPagination prevDoc={doc.prevDoc} nextDoc={doc.nextDoc} />
-          <TwikooComment />
-        </ThreeColumnLayout>
+        {/* 文档分页导航 */}
+        <DocPagination nextDoc={firstDoc} />
       </div>
-    );
-  } catch (error) {
-    console.error("Error in docs home page:", error);
-    notFound();
-  }
+    </ThreeColumnLayout>
+  );
 }

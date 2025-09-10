@@ -11,13 +11,24 @@
  * @usage
  * 在 layout.tsx 中使用：
  * ```typescript
- * import { generateMetadata, generateViewport } from '@/lib/metadata';
+ * import { generateMetadata, generateViewport } from '@/features/seo';
  *
  * export { generateMetadata as metadata, generateViewport as viewport };
  * ```
  */
 
 import type { SiteMetadata, IosConfig, WindowsConfig } from "@/types";
+
+/**
+ * 站点元数据配置
+ *
+ * 配置站点的基础元数据信息，包括标题、描述、作者等
+ * 用于生成页面的 meta 标签和 SEO 信息
+ *
+ * @example
+ * // 在页面中使用
+ * import { generateMetadata, generateViewport } from '@/features/seo';
+ */
 
 /**
  * 站点基础配置

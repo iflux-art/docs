@@ -13,7 +13,7 @@
 
 ### 核心功能
 
-- **多类型搜索**: 支持链接、博客、文档的统一搜索
+- **多类型搜索**: 支持链接、文档的统一搜索
 - **智能匹配**: 基于标题、描述、标签的模糊匹配
 - **结果排序**: 按匹配度自动排序搜索结果
 - **类型过滤**: 支持按内容类型过滤搜索结果
@@ -84,7 +84,7 @@ function SearchComponent() {
 
 ```typescript
 interface SearchResult {
-  type: 'link' | 'blog' | 'doc';
+  type: 'link' | 'doc';
   title: string;
   description?: string;
   url?: string;
@@ -93,7 +93,7 @@ interface SearchResult {
 }
 
 interface SearchOptions {
-  type?: 'all' | 'links' | 'blog' | 'doc';
+  type?: 'all' | 'links' | 'doc';
   limit?: number;
   includeContent?: boolean;
 }
@@ -141,7 +141,7 @@ const defaultOptions = {
 
 ### 自定义搜索
 
-``typescript
+```typescript
 // 只搜索文档内容
 await search('React', { type: 'doc', limit: 5 });
 
@@ -204,7 +204,6 @@ GET /api/search?q=React&type=all&limit=10
 
 搜索功能整合了以下数据源：
 
-- **链接数据**: 来自 `src/content/links/**/*.json`
 - **文档数据**: 来自 `src/content/docs/**/*.mdx`
 
 ## 未来扩展

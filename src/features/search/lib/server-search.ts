@@ -18,7 +18,6 @@ interface LinkItem {
 
 // 内存缓存
 let contentCache: {
-  blogs: SearchResult[];
   docs: SearchResult[];
   links: SearchResult[];
   timestamp: number;
@@ -27,10 +26,10 @@ let contentCache: {
 const CACHE_TTL = 5 * 60 * 1000; // 5分钟缓存
 
 /**
- * 扫描内容文件（博客/文档）
+ * 扫描内容文件（文档）
  */
-async function scanContentFiles(contentType: "blog" | "docs"): Promise<SearchResult[]> {
-  const basePath = path.join(process.cwd(), `src/content/${contentType}`);
+async function scanContentFiles(contentType: "docs"): Promise<SearchResult[]> {
+  const basePath = path.join(process.cwd(), "src/content");
   const files = await glob("**/*.mdx", { cwd: basePath });
   const results: SearchResult[] = [];
 
@@ -43,7 +42,8 @@ async function scanContentFiles(contentType: "blog" | "docs"): Promise<SearchRes
         const { data: frontmatter } = matter(content);
         if (frontmatter?.title && typeof frontmatter.title === "string") {
           results.push({
-            type: contentType === "blog" ? "blog" : "doc",
+            id: `doc-${file.replace(/\.mdx$/, "")}`,
+            type: "doc",
             title: frontmatter.title,
             description:
               typeof frontmatter.description === "string" ? frontmatter.description : undefined,
@@ -78,8 +78,9 @@ async function scanLinkFiles(): Promise<SearchResult[]> {
         const fileContent = await fs.readFile(filePath, "utf8");
         const items: LinkItem[] = JSON.parse(fileContent);
 
-        items.forEach(item => {
+        items.forEach((item, index) => {
           results.push({
+            id: `link-${file}-${index}`,
             type: "link",
             title: item.title,
             description: item.description,
@@ -105,13 +106,9 @@ export async function getCachedContent() {
     return contentCache;
   }
 
-  const [blogs, docs, links] = await Promise.all([
-    scanContentFiles("blog"),
-    scanContentFiles("docs"),
-    scanLinkFiles(),
-  ]);
+  const [docs, links] = await Promise.all([scanContentFiles("docs"), scanLinkFiles()]);
 
-  contentCache = { blogs, docs, links, timestamp: now };
+  contentCache = { docs, links, timestamp: now };
   return contentCache;
 }
 
