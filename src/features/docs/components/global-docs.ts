@@ -5,7 +5,10 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { getDocCategories, getDocDirectoryStructure } from "@/features/docs/lib";
+import {
+  getDocCategories,
+  getDocDirectoryStructure,
+} from "@/features/docs/lib";
 import type { DocCategory, SidebarItem } from "@/features/docs/types";
 
 // 常量定义
@@ -53,7 +56,10 @@ export function getAllDocsStructure(): GlobalDocsStructure {
   let firstDocPath = "";
 
   for (const category of categories) {
-    const categoryDocs = getDocDirectoryStructure(DOCS_CONTENT_DIR, category.id);
+    const categoryDocs = getDocDirectoryStructure(
+      DOCS_CONTENT_DIR,
+      category.id,
+    );
     const hasIndex = checkCategoryHasIndex(category.id);
     const firstDoc = findFirstDocInCategory(categoryDocs);
 
@@ -157,7 +163,10 @@ export function resolveDocumentPath(slugPath: string[]): DocPathResolution {
     }
 
     // 没有 index 文件，查找第一个子文档
-    const categoryDocs = getDocDirectoryStructure(DOCS_CONTENT_DIR, requestedPath);
+    const categoryDocs = getDocDirectoryStructure(
+      DOCS_CONTENT_DIR,
+      requestedPath,
+    );
     const firstDoc = findFirstDocInCategory(categoryDocs);
 
     if (firstDoc) {

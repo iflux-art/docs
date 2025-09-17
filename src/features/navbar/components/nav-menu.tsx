@@ -1,10 +1,10 @@
 "use client";
 
-import { NAV_ITEMS, NAV_PATHS } from "./nav-config";
-import type { NavConfigItem } from "./nav-config";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/utils";
+import type { NavConfigItem } from "./nav-config";
+import { NAV_ITEMS, NAV_PATHS } from "./nav-config";
 
 interface NavListMenuProps {
   className?: string;
@@ -18,8 +18,11 @@ export const NavListMenu = ({ className = "" }: NavListMenuProps) => {
   const pathname = usePathname();
 
   return (
-    <nav className={cn("flex items-center gap-6", className)} aria-label="主导航">
-      {NAV_ITEMS.map(item => {
+    <nav
+      className={cn("flex items-center gap-6", className)}
+      aria-label="主导航"
+    >
+      {NAV_ITEMS.map((item) => {
         // 类型断言，确保 TypeScript 知道 item 包含 external 和 href 属性
         const navItem = item as NavConfigItem;
 
@@ -32,7 +35,7 @@ export const NavListMenu = ({ className = "" }: NavListMenuProps) => {
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                "text-sm font-medium transition-colors hover:text-primary text-muted-foreground"
+                "text-sm font-medium transition-colors hover:text-primary text-muted-foreground",
               )}
             >
               {navItem.label}
@@ -42,7 +45,8 @@ export const NavListMenu = ({ className = "" }: NavListMenuProps) => {
 
         // 处理内部链接
         const href = NAV_PATHS[navItem.key] || `/${navItem.key}`;
-        const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
+        const isActive =
+          pathname === href || (href !== "/" && pathname.startsWith(href));
 
         return (
           <Link
@@ -50,7 +54,7 @@ export const NavListMenu = ({ className = "" }: NavListMenuProps) => {
             href={href}
             className={cn(
               "text-sm font-medium transition-colors hover:text-primary",
-              isActive ? "text-primary" : "text-muted-foreground"
+              isActive ? "text-primary" : "text-muted-foreground",
             )}
             aria-current={isActive ? "page" : undefined}
           >

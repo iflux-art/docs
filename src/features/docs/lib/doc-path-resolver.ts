@@ -17,7 +17,10 @@ export interface PathResolutionResult {
  */
 export function isValidDocPath(slug: string[]): boolean {
   // 特殊处理：项目信息和技术栈路径无效
-  if (slug[0] === "project" && (slug[1] === "项目信息" || slug[1] === "技术栈")) {
+  if (
+    slug[0] === "project" &&
+    (slug[1] === "项目信息" || slug[1] === "技术栈")
+  ) {
     return false;
   }
 
@@ -26,7 +29,10 @@ export function isValidDocPath(slug: string[]): boolean {
   const absolutePath = path.join(docsDir, ...slug);
 
   // 检查是否存在.md或.mdx文件
-  if (fs.existsSync(`${absolutePath}.mdx`) || fs.existsSync(`${absolutePath}.md`)) {
+  if (
+    fs.existsSync(`${absolutePath}.mdx`) ||
+    fs.existsSync(`${absolutePath}.md`)
+  ) {
     return true;
   }
 
@@ -71,7 +77,10 @@ export function resolveDocPath(slug: string[]): PathResolutionResult {
  * @param redirectTo 重定向目标路径
  * @returns 是否为重定向循环
  */
-export function isRedirectLoop(currentPath: string, redirectTo: string): boolean {
+export function isRedirectLoop(
+  currentPath: string,
+  redirectTo: string,
+): boolean {
   return currentPath === redirectTo;
 }
 
@@ -82,6 +91,8 @@ export function isRedirectLoop(currentPath: string, redirectTo: string): boolean
  */
 export function normalizeDocPath(slug: string[]): string[] {
   return slug
-    .filter(segment => segment && typeof segment === "string" && segment.trim())
-    .map(segment => segment.trim());
+    .filter(
+      (segment) => segment && typeof segment === "string" && segment.trim(),
+    )
+    .map((segment) => segment.trim());
 }

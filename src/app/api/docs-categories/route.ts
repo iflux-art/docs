@@ -20,7 +20,7 @@ export function GET() {
         error: "获取文档分类列表失败",
         details: error instanceof Error ? error.message : "未知错误",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

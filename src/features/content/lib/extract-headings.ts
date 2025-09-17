@@ -53,15 +53,15 @@ export function extractHeadings(content: string): {
   }
 
   // 确保所有标题都有唯一ID
-  headings.forEach(heading => {
+  headings.forEach((heading) => {
     const escapedText = escapeRegExp(heading.text);
     const headingRegex = new RegExp(
       `^(#{${heading.level}})\\s+(?:\\[[^\\]]+\\]\\([^)]+\\)|${escapedText})(?:\\s*{#[\\w-]+})?$`,
-      "gm"
+      "gm",
     );
     processedContent = processedContent.replace(
       headingRegex,
-      `$1 ${heading.text} {#${heading.id}}`
+      `$1 ${heading.text} {#${heading.id}}`,
     );
   });
 

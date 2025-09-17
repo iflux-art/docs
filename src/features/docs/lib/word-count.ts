@@ -18,7 +18,7 @@ export function countWords(text: string): number {
   const englishWords = cleanText
     .replace(/[\u4e00-\u9fa5]/g, "")
     .split(/\s+/)
-    .filter(word => word.length > 0);
+    .filter((word) => word.length > 0);
 
   return chineseChars.length + englishWords.length;
 }

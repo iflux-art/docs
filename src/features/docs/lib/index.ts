@@ -4,6 +4,9 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { sync as globSync } from "glob";
+import matter from "gray-matter";
+import type { BreadcrumbItem } from "@/components/breadcrumb";
 import type {
   DocCategory,
   DocContentResult,
@@ -11,26 +14,21 @@ import type {
   NavDocItem,
   SidebarItem,
 } from "@/features/docs/types";
-import type { BreadcrumbItem } from "@/components/breadcrumb";
-import { sync as globSync } from "glob";
-import matter from "gray-matter";
 import { getDocContent } from "./doc-content";
 import { generateDocPaths } from "./doc-paths";
 
-// 导出路径解析工具函数
-export {
-  isValidDocPath,
-  resolveDocPath,
-  isRedirectLoop,
-  normalizeDocPath,
-  type PathResolutionResult,
-} from "./doc-path-resolver";
-
-// 从全局helpers导出字数统计函数
-export { countWords } from "./word-count";
-
 // 从面包屑模块导出类型
 export type { BreadcrumbItem } from "@/components/breadcrumb";
+// 导出路径解析工具函数
+export {
+  isRedirectLoop,
+  isValidDocPath,
+  normalizeDocPath,
+  type PathResolutionResult,
+  resolveDocPath,
+} from "./doc-path-resolver";
+// 从全局helpers导出字数统计函数
+export { countWords } from "./word-count";
 
 /** 面包屑项 */
 // 已移动到 src/components/breadcrumb.tsx 中集中管理
@@ -59,7 +57,10 @@ interface DocMetaItem {
 /**
  * 从meta配置中获取标题
  */
-function getTitleFromMeta(meta: Record<string, unknown>, key: string): string | null {
+function getTitleFromMeta(
+  meta: Record<string, unknown>,
+  key: string,
+): string | null {
   // 修复：添加空值检查
   if (
     meta[key] &&
@@ -85,7 +86,10 @@ export function getDirectoryTitle(dirSlug: string[]): string {
   const metaPath = path.join(docsDir, ...parent, "_meta.json");
 
   if (fs.existsSync(metaPath)) {
-    const meta = JSON.parse(fs.readFileSync(metaPath, "utf8")) as Record<string, unknown>;
+    const meta = JSON.parse(fs.readFileSync(metaPath, "utf8")) as Record<
+      string,
+      unknown
+    >;
     const keyIndex = dirSlug.length - 1;
     // 修复：添加边界检查
     if (keyIndex >= 0 && dirSlug[keyIndex]) {
@@ -113,9 +117,9 @@ export function getDirectoryTitle(dirSlug: string[]): string {
 function findDocFromMeta(
   meta: Record<string, unknown>,
   docsDir: string,
-  dirSlug: string[]
+  dirSlug: string[],
 ): string[] | null {
-  const keys = Object.keys(meta).filter(key => typeof meta[key] === "object");
+  const keys = Object.keys(meta).filter((key) => typeof meta[key] === "object");
   for (const key of keys) {
     // 检查是否有对应的 md/mdx 文件
     const mdx = path.join(docsDir, `${key}.mdx`);
@@ -130,7 +134,10 @@ function findDocFromMeta(
 /**
  * 从文件系统中查找第一个文档
  */
-function findFirstDocFromFiles(docsDir: string, dirSlug: string[]): string[] | null {
+function findFirstDocFromFiles(
+  docsDir: string,
+  dirSlug: string[],
+): string[] | null {
   const files = globSync("*.{md,mdx}", { cwd: docsDir });
   if (files.length > 0) {
     const sortedFiles = files.sort();
@@ -154,7 +161,10 @@ export function getFirstDocInDirectory(dirSlug: string[]): string[] | null {
   // 1. 优先 _meta.json 顺序
   const metaPath = path.join(docsDir, "_meta.json");
   if (fs.existsSync(metaPath)) {
-    const meta = JSON.parse(fs.readFileSync(metaPath, "utf8")) as Record<string, unknown>;
+    const meta = JSON.parse(fs.readFileSync(metaPath, "utf8")) as Record<
+      string,
+      unknown
+    >;
     const result = findDocFromMeta(meta, docsDir, dirSlug);
     if (result) return result;
   }
@@ -168,7 +178,7 @@ export function getFirstDocInDirectory(dirSlug: string[]): string[] | null {
  */
 export function createDocBreadcrumbsServer(
   slug: string[],
-  currentTitle?: string
+  currentTitle?: string,
 ): BreadcrumbItem[] {
   const items: BreadcrumbItem[] = [];
   // 根目录
@@ -177,7 +187,8 @@ export function createDocBreadcrumbsServer(
     const dir = slug.slice(0, i + 1);
     const isLast = i === slug.length - 1;
     // 只在最后一级用 currentTitle，否则用目录 title
-    const label = isLast && currentTitle ? currentTitle : getDirectoryTitle(dir);
+    const label =
+      isLast && currentTitle ? currentTitle : getDirectoryTitle(dir);
     if (!isLast) {
       const firstDoc = getFirstDocInDirectory(dir);
       if (firstDoc) {
@@ -218,7 +229,10 @@ function countDocsRecursively(dir: string): number {
 
     if (item.isDirectory()) {
       count += countDocsRecursively(itemPath);
-    } else if (item.isFile() && (item.name.endsWith(".mdx") || item.name.endsWith(".md"))) {
+    } else if (
+      item.isFile() &&
+      (item.name.endsWith(".mdx") || item.name.endsWith(".md"))
+    ) {
       count += 1;
     }
   }
@@ -228,7 +242,9 @@ function countDocsRecursively(dir: string): number {
 /**
  * 获取根目录meta配置
  */
-function getRootMetaConfig(docsDir: string): Record<string, DocMetaItem | string> {
+function getRootMetaConfig(
+  docsDir: string,
+): Record<string, DocMetaItem | string> {
   const rootMetaPath = path.join(docsDir, "_meta.json");
   if (fs.existsSync(rootMetaPath)) {
     try {
@@ -248,19 +264,19 @@ function getRootMetaConfig(docsDir: string): Record<string, DocMetaItem | string
  */
 function getOrderedCategoryNames(
   dirs: fs.Dirent[],
-  rootMeta: Record<string, DocMetaItem | string>
+  rootMeta: Record<string, DocMetaItem | string>,
 ): string[] {
   const orderedCategoryNames: string[] = [];
 
   // Add categories from rootMeta first, in their defined order
-  Object.keys(rootMeta).forEach(key => {
-    if (dirs.some(dir => dir.name === key && dir.isDirectory())) {
+  Object.keys(rootMeta).forEach((key) => {
+    if (dirs.some((dir) => dir.name === key && dir.isDirectory())) {
       orderedCategoryNames.push(key);
     }
   });
 
   // Add remaining directories not in rootMeta, sorted alphabetically
-  dirs.forEach(dir => {
+  dirs.forEach((dir) => {
     if (
       dir.isDirectory() &&
       !dir.name.startsWith("_") &&
@@ -273,11 +289,15 @@ function getOrderedCategoryNames(
 
   // Sort the ones not in meta alphabetically if needed, but they are added after meta ones
   const nonMetaDirs = orderedCategoryNames.slice(
-    Object.keys(rootMeta).filter(k => orderedCategoryNames.includes(k)).length
+    Object.keys(rootMeta).filter((k) => orderedCategoryNames.includes(k))
+      .length,
   );
   nonMetaDirs.sort((a, b) => a.localeCompare(b));
 
-  return [...Object.keys(rootMeta).filter(k => orderedCategoryNames.includes(k)), ...nonMetaDirs];
+  return [
+    ...Object.keys(rootMeta).filter((k) => orderedCategoryNames.includes(k)),
+    ...nonMetaDirs,
+  ];
 }
 
 /**
@@ -286,7 +306,7 @@ function getOrderedCategoryNames(
 function createDocCategory(
   categoryId: string,
   rootMeta: Record<string, DocMetaItem | string>,
-  docsDir: string
+  docsDir: string,
 ): DocCategory {
   const categoryDir = path.join(docsDir, categoryId);
   const docCount = countDocsRecursively(categoryDir);
@@ -339,7 +359,7 @@ export function getDocCategories(): DocCategory[] {
   const dirs = fs.readdirSync(docsDir, { withFileTypes: true });
   const finalOrderedCategoryNames = getOrderedCategoryNames(dirs, rootMeta);
 
-  finalOrderedCategoryNames.forEach(categoryId => {
+  finalOrderedCategoryNames.forEach((categoryId) => {
     const category = createDocCategory(categoryId, rootMeta, docsDir);
     categories.push(category);
   });
@@ -353,10 +373,13 @@ export function getDocCategories(): DocCategory[] {
 function processDocFile(
   item: fs.Dirent,
   categoryId: string,
-  categoryDir: string
+  categoryDir: string,
 ): DocListItem | null {
   if (
-    !(item.isFile() && (item.name.endsWith(".mdx") || item.name.endsWith(".md"))) ||
+    !(
+      item.isFile() &&
+      (item.name.endsWith(".mdx") || item.name.endsWith(".md"))
+    ) ||
     item.name.startsWith("_") ||
     item.name === "index.mdx" ||
     item.name === "index.md"
@@ -386,10 +409,17 @@ function processDocFile(
 /**
  * 从单个分类中收集文档
  */
-function collectDocsFromCategory(category: fs.Dirent, docsDir: string): DocListItem[] {
+function collectDocsFromCategory(
+  category: fs.Dirent,
+  docsDir: string,
+): DocListItem[] {
   const docs: DocListItem[] = [];
 
-  if (!category.isDirectory() || category.name.startsWith("_") || category.name.startsWith(".")) {
+  if (
+    !category.isDirectory() ||
+    category.name.startsWith("_") ||
+    category.name.startsWith(".")
+  ) {
     return docs;
   }
 
@@ -397,7 +427,7 @@ function collectDocsFromCategory(category: fs.Dirent, docsDir: string): DocListI
   const categoryDir = path.join(docsDir, categoryId);
   const items = fs.readdirSync(categoryDir, { withFileTypes: true });
 
-  items.forEach(item => {
+  items.forEach((item) => {
     const docItem = processDocFile(item, categoryId, categoryDir);
     if (docItem) {
       docs.push(docItem);
@@ -417,7 +447,7 @@ export function getRecentDocs(limit = 4): DocListItem[] {
   const allDocs: DocListItem[] = [];
   const categories = fs.readdirSync(docsDir, { withFileTypes: true });
 
-  categories.forEach(category => {
+  categories.forEach((category) => {
     const docs = collectDocsFromCategory(category, docsDir);
     allDocs.push(...docs);
   });
@@ -435,7 +465,9 @@ export function getRecentDocs(limit = 4): DocListItem[] {
 /**
  * 加载meta配置
  */
-function loadMetaConfig(currentAbsolutePath: string): Record<string, DocMetaItem | string> {
+function loadMetaConfig(
+  currentAbsolutePath: string,
+): Record<string, DocMetaItem | string> {
   const metaFilePath = path.join(currentAbsolutePath, "_meta.json");
   if (!fs.existsSync(metaFilePath)) {
     return {};
@@ -455,13 +487,15 @@ function loadMetaConfig(currentAbsolutePath: string): Record<string, DocMetaItem
 /**
  * 收集目录中的项目
  */
-function collectDirectoryItems(currentAbsolutePath: string): { name: string; isDir: boolean }[] {
+function collectDirectoryItems(
+  currentAbsolutePath: string,
+): { name: string; isDir: boolean }[] {
   const itemsInDir = fs.readdirSync(currentAbsolutePath, {
     withFileTypes: true,
   });
   const collectedItems: { name: string; isDir: boolean }[] = [];
 
-  itemsInDir.forEach(dirItem => {
+  itemsInDir.forEach((dirItem) => {
     // Skip system files/dirs and index files (Requirement 4 for sidebar)
     if (
       dirItem.name.startsWith("_") ||
@@ -494,23 +528,22 @@ function collectDirectoryItems(currentAbsolutePath: string): { name: string; isD
 function getSortedItemNames(
   metaConfig: Record<string, DocMetaItem | string>,
   collectedItems: { name: string; isDir: boolean }[],
-  metaExists: boolean
+  metaExists: boolean,
 ): string[] {
   if (metaExists) {
     // Requirement 3: Strict order by _meta.json if it exists.
     // Filter collectedItems to only those present in metaConfig keys.
-    return Object.keys(metaConfig).filter(key => {
+    return Object.keys(metaConfig).filter((key) => {
       const metaEntry = metaConfig[key];
       // Exclude items marked as hidden in meta
       if (typeof metaEntry === "object" && metaEntry.display === "hidden") {
         return false;
       }
-      return collectedItems.some(ci => ci.name === key);
+      return collectedItems.some((ci) => ci.name === key);
     });
-  } else {
-    // Requirement 3: Filename ascending order if no _meta.json
-    return collectedItems.map(ci => ci.name).sort((a, b) => a.localeCompare(b));
   }
+  // Requirement 3: Filename ascending order if no _meta.json
+  return collectedItems.map((ci) => ci.name).sort((a, b) => a.localeCompare(b));
 }
 
 /**
@@ -519,9 +552,13 @@ function getSortedItemNames(
 function getTitleFromFrontmatter(
   rootDocsDir: string,
   currentRelativePath: string,
-  itemName: string
+  itemName: string,
 ): string {
-  let mdFilePath = path.join(rootDocsDir, currentRelativePath, `${itemName}.mdx`);
+  let mdFilePath = path.join(
+    rootDocsDir,
+    currentRelativePath,
+    `${itemName}.mdx`,
+  );
   if (!fs.existsSync(mdFilePath)) {
     mdFilePath = path.join(rootDocsDir, currentRelativePath, `${itemName}.md`);
   }
@@ -554,8 +591,13 @@ interface CreateItemParams {
  * 创建目录项
  */
 function createDirectoryItem(params: CreateItemParams): SidebarItem {
-  const { itemName, itemSpecificConfig, itemFsRelativePath, rootDocsDir, currentRelativePath } =
-    params;
+  const {
+    itemName,
+    itemSpecificConfig,
+    itemFsRelativePath,
+    rootDocsDir,
+    currentRelativePath,
+  } = params;
   const children = getDocDirectoryStructure(rootDocsDir, itemFsRelativePath);
   const normalizedRelativePath = currentRelativePath.replace(/\\/g, "/");
   // 移除 /docs 前缀，因为我们已经将路由提升到根路径
@@ -580,8 +622,13 @@ function createDirectoryItem(params: CreateItemParams): SidebarItem {
  * 创建文件项
  */
 function createFileItem(params: CreateItemParams): SidebarItem {
-  const { itemName, itemSpecificConfig, itemFsRelativePath, rootDocsDir, currentRelativePath } =
-    params;
+  const {
+    itemName,
+    itemSpecificConfig,
+    itemFsRelativePath,
+    rootDocsDir,
+    currentRelativePath,
+  } = params;
   const normalizedRelativePath = currentRelativePath.replace(/\\/g, "/");
   // 移除 /docs 前缀，因为我们已经将路由提升到根路径
   const defaultHref = `/${normalizedRelativePath ? `${normalizedRelativePath}/` : ""}${itemName}`;
@@ -613,21 +660,30 @@ function createFileItem(params: CreateItemParams): SidebarItem {
  */
 export function getDocDirectoryStructure(
   rootDocsDir: string,
-  currentRelativePath = ""
+  currentRelativePath = "",
 ): SidebarItem[] {
   const currentAbsolutePath = path.join(rootDocsDir, currentRelativePath);
 
-  if (!(fs.existsSync(currentAbsolutePath) && fs.statSync(currentAbsolutePath).isDirectory())) {
+  if (
+    !(
+      fs.existsSync(currentAbsolutePath) &&
+      fs.statSync(currentAbsolutePath).isDirectory()
+    )
+  ) {
     return [];
   }
 
   const metaConfig = loadMetaConfig(currentAbsolutePath);
   const metaExists = Object.keys(metaConfig).length > 0;
   const collectedItems = collectDirectoryItems(currentAbsolutePath);
-  const sortedItemNames = getSortedItemNames(metaConfig, collectedItems, metaExists);
+  const sortedItemNames = getSortedItemNames(
+    metaConfig,
+    collectedItems,
+    metaExists,
+  );
 
   return sortedItemNames
-    .map(itemName => {
+    .map((itemName) => {
       const itemMetaEntry = metaConfig[itemName];
       // 修复：确保 itemSpecificConfig 总是符合 DocMetaItem 类型
       const itemSpecificConfig: DocMetaItem =
@@ -635,7 +691,7 @@ export function getDocDirectoryStructure(
           ? { title: itemMetaEntry }
           : (itemMetaEntry ?? { title: itemName });
 
-      const actualItem = collectedItems.find(ci => ci.name === itemName);
+      const actualItem = collectedItems.find((ci) => ci.name === itemName);
       if (!actualItem) return null; // Should not happen
 
       const itemFsRelativePath = path.join(currentRelativePath, itemName); // Relative to rootDocsDir
@@ -649,15 +705,14 @@ export function getDocDirectoryStructure(
           rootDocsDir,
           currentRelativePath,
         });
-      } else {
-        return createFileItem({
-          itemName,
-          itemSpecificConfig,
-          itemFsRelativePath,
-          rootDocsDir,
-          currentRelativePath,
-        });
       }
+      return createFileItem({
+        itemName,
+        itemSpecificConfig,
+        itemFsRelativePath,
+        rootDocsDir,
+        currentRelativePath,
+      });
     })
     .filter(Boolean) as SidebarItem[];
 }
@@ -693,7 +748,7 @@ function shouldSkipItem(item: SidebarItem): boolean {
 function processItemWithChildren(
   item: SidebarItem,
   _flatList: NavDocItem[],
-  recurseItems: (items: SidebarItem[]) => void
+  recurseItems: (items: SidebarItem[]) => void,
 ): void {
   if (item.items && item.items.length > 0) {
     recurseItems(item.items);
@@ -706,7 +761,7 @@ function processItemWithChildren(
 function processPageItem(
   item: SidebarItem,
   _topLevelCategory: string,
-  flatList: NavDocItem[]
+  flatList: NavDocItem[],
 ): void {
   if (item.type === "page" || (item.type === "menu" && item.href)) {
     // Ensure path starts with / and normalize (remove /docs/ prefix)
@@ -730,7 +785,7 @@ function processPageItem(
  */
 function processMenuChildren(
   item: SidebarItem,
-  recurseItems: (items: SidebarItem[]) => void
+  recurseItems: (items: SidebarItem[]) => void,
 ): void {
   if (item.items && item.items.length > 0 && item.type === "menu") {
     recurseItems(item.items);

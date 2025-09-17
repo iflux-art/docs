@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { DocContentResult, NavDocItem } from "@/features/docs/types";
-import { extractHeadings } from "@/features/content/lib";
 import matter from "gray-matter";
+import { extractHeadings } from "@/features/content/lib";
+import type { DocContentResult, NavDocItem } from "@/features/docs/types";
 import { getFlattenedDocsOrder } from "./doc-paths";
 import { countWords } from "./word-count";
 
@@ -34,7 +34,9 @@ function cleanupExpiredCache() {
 
   // 如果缓存大小超过限制，清理最早的缓存
   if (docContentCache.size > MAX_CACHE_SIZE) {
-    const sortedEntries = [...docCacheTimestamp.entries()].sort((a, b) => a[1] - b[1]);
+    const sortedEntries = [...docCacheTimestamp.entries()].sort(
+      (a, b) => a[1] - b[1],
+    );
     // 修复：添加边界检查
     if (sortedEntries.length > 0 && sortedEntries[0]) {
       const oldestKey = sortedEntries[0][0];
@@ -50,7 +52,10 @@ function cleanupExpiredCache() {
  * 检查是否为index页面并获取文件路径
  */
 function findIndexFilePath(absoluteRequestedPath: string): string | undefined {
-  if (fs.existsSync(absoluteRequestedPath) && fs.statSync(absoluteRequestedPath).isDirectory()) {
+  if (
+    fs.existsSync(absoluteRequestedPath) &&
+    fs.statSync(absoluteRequestedPath).isDirectory()
+  ) {
     for (const indexFile of DOCS_INDEX_FILES) {
       const indexPath = path.join(absoluteRequestedPath, indexFile);
       if (fs.existsSync(indexPath)) {
@@ -97,13 +102,17 @@ function getDocumentFilePath(absoluteRequestedPath: string): {
     return { filePath: directFilePath, isIndexPage: false };
   }
 
-  throw new Error(`Document not found at path: ${path.basename(absoluteRequestedPath)}`);
+  throw new Error(
+    `Document not found at path: ${path.basename(absoluteRequestedPath)}`,
+  );
 }
 
 /**
  * 格式化日期
  */
-function formatDate(dateValue: string | number | Date | undefined): string | null {
+function formatDate(
+  dateValue: string | number | Date | undefined,
+): string | null {
   if (!dateValue) return null;
 
   return new Date(dateValue).toLocaleDateString("zh-CN", {
@@ -119,38 +128,41 @@ function formatDate(dateValue: string | number | Date | undefined): string | nul
 function getNavigationDocs(
   isIndexPage: boolean,
   actualSlugForNav: string,
-  flattenedDocs: NavDocItem[]
+  flattenedDocs: NavDocItem[],
 ): { prevDoc: NavDocItem | null; nextDoc: NavDocItem | null } {
   if (isIndexPage) {
     const indexDirNavPath = `/${actualSlugForNav}`;
     const nextDoc =
       flattenedDocs.find(
-        doc =>
+        (doc) =>
           doc.path.startsWith(`${indexDirNavPath}/`) ||
           (doc.path.startsWith(indexDirNavPath) &&
             doc.path !== indexDirNavPath &&
-            !doc.path.substring(indexDirNavPath.length + 1).includes("/"))
+            !doc.path.substring(indexDirNavPath.length + 1).includes("/")),
       ) ?? null;
 
     return { prevDoc: null, nextDoc };
-  } else {
-    const currentNavPath = `/${actualSlugForNav}`;
-    const currentIndex = flattenedDocs.findIndex(doc => doc.path === currentNavPath);
-
-    if (currentIndex === -1) {
-      return { prevDoc: null, nextDoc: null };
-    }
-
-    const prevDoc = currentIndex > 0 ? flattenedDocs[currentIndex - 1] : null;
-    const nextDoc =
-      currentIndex < flattenedDocs.length - 1 ? flattenedDocs[currentIndex + 1] : null;
-
-    // 修复：确保返回值符合类型要求
-    return {
-      prevDoc: prevDoc !== undefined ? prevDoc : null,
-      nextDoc: nextDoc !== undefined ? nextDoc : null,
-    };
   }
+  const currentNavPath = `/${actualSlugForNav}`;
+  const currentIndex = flattenedDocs.findIndex(
+    (doc) => doc.path === currentNavPath,
+  );
+
+  if (currentIndex === -1) {
+    return { prevDoc: null, nextDoc: null };
+  }
+
+  const prevDoc = currentIndex > 0 ? flattenedDocs[currentIndex - 1] : null;
+  const nextDoc =
+    currentIndex < flattenedDocs.length - 1
+      ? flattenedDocs[currentIndex + 1]
+      : null;
+
+  // 修复：确保返回值符合类型要求
+  return {
+    prevDoc: prevDoc !== undefined ? prevDoc : null,
+    nextDoc: nextDoc !== undefined ? nextDoc : null,
+  };
 }
 
 /**
@@ -184,19 +196,30 @@ export function getDocContent(slug: string[]): DocContentResult {
   const fileContent = fs.readFileSync(filePath, "utf8");
   const { content: originalContent, data: frontmatter } = matter(fileContent);
 
-  const date = formatDate(frontmatter.date as string | number | Date | undefined);
-  const updatedAt = formatDate(frontmatter.update as string | number | Date | undefined);
+  const date = formatDate(
+    frontmatter.date as string | number | Date | undefined,
+  );
+  const updatedAt = formatDate(
+    frontmatter.update as string | number | Date | undefined,
+  );
 
   const wordCount = countWords(originalContent);
   const { headings } = extractHeadings(originalContent);
   // 修复：添加空值检查并提供默认值
   const topLevelCategorySlug = slug[0] ?? "";
   // 修复：添加空值检查
-  const flattenedDocs = topLevelCategorySlug ? getFlattenedDocsOrder(topLevelCategorySlug) : [];
-  const { prevDoc, nextDoc } = getNavigationDocs(isIndexPage, actualSlugForNav, flattenedDocs);
+  const flattenedDocs = topLevelCategorySlug
+    ? getFlattenedDocsOrder(topLevelCategorySlug)
+    : [];
+  const { prevDoc, nextDoc } = getNavigationDocs(
+    isIndexPage,
+    actualSlugForNav,
+    flattenedDocs,
+  );
 
   const result: DocContentResult = {
-    title: (frontmatter.title ?? path.basename(filePath, path.extname(filePath))) as string,
+    title: (frontmatter.title ??
+      path.basename(filePath, path.extname(filePath))) as string,
     content: originalContent,
     frontmatter: {
       title: frontmatter.title as string,

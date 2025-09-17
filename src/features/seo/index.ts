@@ -5,10 +5,10 @@
 
 // 基础元数据生成工具
 export {
-  generateViewport,
-  generateMetadata,
   generateArticleMetadata,
+  generateMetadata,
   generateProfileMetadata,
+  generateViewport,
 } from "./metadata";
 
 // SEO 工具函数

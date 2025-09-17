@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { getDocCategories, getDocDirectoryStructure } from "@/features/docs/lib";
+import {
+  getDocCategories,
+  getDocDirectoryStructure,
+} from "@/features/docs/lib";
 import type { DocListItem, SidebarItem } from "@/features/docs/types";
 import { setCacheHeaders } from "@/lib/api/cache-utils";
 
@@ -16,11 +19,12 @@ const flattenSidebarItems = (
   }>,
   categoryId: string,
   docs: DocListItem[],
-  parentPath = ""
+  parentPath = "",
 ): void => {
-  items.forEach(item => {
+  items.forEach((item) => {
     if (item.type === "page" && item.href) {
-      const slug = item.filePath?.split("/").pop() ?? item.href.split("/").pop() ?? "";
+      const slug =
+        item.filePath?.split("/").pop() ?? item.href.split("/").pop() ?? "";
 
       docs.push({
         slug,
@@ -36,7 +40,7 @@ const flattenSidebarItems = (
         item.items,
         categoryId,
         docs,
-        parentPath + (item.filePath ? `/${item.filePath}` : "")
+        parentPath + (item.filePath ? `/${item.filePath}` : ""),
       );
     }
   });
@@ -53,8 +57,11 @@ export function GET() {
     const allDocs: DocListItem[] = [];
 
     // 遍历所有分类，获取每个分类下的文档
-    categories.forEach(category => {
-      const sidebarItems = getDocDirectoryStructure(`${process.cwd()}/src/content`, category.id);
+    categories.forEach((category) => {
+      const sidebarItems = getDocDirectoryStructure(
+        `${process.cwd()}/src/content`,
+        category.id,
+      );
       flattenSidebarItems(sidebarItems, category.id, allDocs);
     });
 
@@ -68,7 +75,7 @@ export function GET() {
         error: "获取文档列表失败",
         details: error instanceof Error ? error.message : "未知错误",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

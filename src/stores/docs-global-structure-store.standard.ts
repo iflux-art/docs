@@ -65,16 +65,19 @@ export const createDocsGlobalStructureStore = () => {
     timestamp: 0,
 
     // Actions
-    setStructure: structure => set({ structure }),
-    setLoading: loading => set({ loading }),
-    setError: error => set({ error }),
-    setTimestamp: timestamp => set({ timestamp }),
+    setStructure: (structure) => set({ structure }),
+    setLoading: (loading) => set({ loading }),
+    setError: (error) => set({ error }),
+    setTimestamp: (timestamp) => set({ timestamp }),
     resetState: () => set({ ...initialState }),
 
     // 派生状态通过getter函数实现
     get isCacheValid() {
       const state = get();
-      return state.structure !== null && Date.now() - state.timestamp < CACHE_VALIDITY_MS;
+      return (
+        state.structure !== null &&
+        Date.now() - state.timestamp < CACHE_VALIDITY_MS
+      );
     },
 
     get categories() {
@@ -93,8 +96,8 @@ export const createDocsGlobalStructureStore = () => {
         category: string;
       }> = [];
 
-      structure.categories.forEach(category => {
-        category.docs.forEach(item => {
+      structure.categories.forEach((category) => {
+        category.docs.forEach((item) => {
           // SidebarItem 可能没有 id 属性，使用 title 作为 id
           docs.push({
             id: item.title, // 使用 title 作为 id，因为 SidebarItem 可能没有 id 属性

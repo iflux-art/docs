@@ -73,22 +73,33 @@ export function useGlobalDocsState(): UseGlobalDocsStateResult {
       const response = await fetch("/api/docs-global-structure");
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch global docs structure: ${response.statusText}`);
+        throw new Error(
+          `Failed to fetch global docs structure: ${response.statusText}`,
+        );
       }
 
-      const data: GlobalDocsStructure = (await response.json()) as GlobalDocsStructure;
+      const data: GlobalDocsStructure =
+        (await response.json()) as GlobalDocsStructure;
       setStructure(data);
 
       // Update timestamp
       setTimestamp(Date.now());
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error occurred";
       setError(errorMessage);
       console.error("Error fetching global docs structure:", err);
     } finally {
       setLoading(false);
     }
-  }, [structure, isCacheValid, setStructure, setLoading, setError, setTimestamp]);
+  }, [
+    structure,
+    isCacheValid,
+    setStructure,
+    setLoading,
+    setError,
+    setTimestamp,
+  ]);
 
   useEffect(() => {
     void fetchGlobalDocs();

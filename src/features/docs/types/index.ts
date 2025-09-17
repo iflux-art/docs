@@ -49,7 +49,9 @@ export interface DocFrontmatter extends DocContentBase {
  * @param obj 要转换的对象
  * @returns 转换后的 DocFrontmatter 对象
  */
-export function toDocFrontmatter<T extends Record<string, unknown>>(obj: T): DocFrontmatter {
+export function toDocFrontmatter<T extends Record<string, unknown>>(
+  obj: T,
+): DocFrontmatter {
   return {
     ...obj,
     title: (obj.title as string) ?? "",
@@ -109,7 +111,10 @@ export interface NavDocItem extends DocNavBase {
 
 // ================= 保留原有类型别名以保持兼容 =================
 
-export type DocListItem = Pick<DocItem, "title" | "description" | "path" | "category"> & {
+export type DocListItem = Pick<
+  DocItem,
+  "title" | "description" | "path" | "category"
+> & {
   slug?: string;
   date?: string | null;
   isActive?: boolean;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 interface UseRoutePrefetchOptions {
   /** 预取延迟时间（毫秒） */
@@ -18,11 +18,18 @@ interface UseRoutePrefetchOptions {
  * @param routes - 要预取的路由数组
  * @param options - 配置选项
  */
-export function useRoutePrefetch(routes: string[], options: UseRoutePrefetchOptions = {}) {
+export function useRoutePrefetch(
+  routes: string[],
+  options: UseRoutePrefetchOptions = {},
+) {
   const router = useRouter();
   const prefetchedRoutes = useRef<Set<string>>(new Set());
 
-  const { prefetchDelay = 0, prefetchOnMount = false, prefetchOnIdle = true } = options;
+  const {
+    prefetchDelay = 0,
+    prefetchOnMount = false,
+    prefetchOnIdle = true,
+  } = options;
 
   // 预取路由
   const prefetchRoute = useCallback(
@@ -36,7 +43,7 @@ export function useRoutePrefetch(routes: string[], options: UseRoutePrefetchOpti
         console.warn(`Failed to prefetch route: ${route}`, error);
       }
     },
-    [router]
+    [router],
   );
 
   // 延迟预取路由
@@ -50,12 +57,12 @@ export function useRoutePrefetch(routes: string[], options: UseRoutePrefetchOpti
         prefetchRoute(route);
       }
     },
-    [prefetchDelay, prefetchRoute]
+    [prefetchDelay, prefetchRoute],
   );
 
   // 预取所有路由
   const prefetchAllRoutes = useCallback(() => {
-    routes.forEach(route => {
+    routes.forEach((route) => {
       prefetchRouteWithDelay(route);
     });
   }, [routes, prefetchRouteWithDelay]);
@@ -69,7 +76,11 @@ export function useRoutePrefetch(routes: string[], options: UseRoutePrefetchOpti
 
   // 在空闲时预取
   useEffect(() => {
-    if (prefetchOnIdle && typeof window !== "undefined" && "requestIdleCallback" in window) {
+    if (
+      prefetchOnIdle &&
+      typeof window !== "undefined" &&
+      "requestIdleCallback" in window
+    ) {
       const idleCallback = window.requestIdleCallback(() => {
         prefetchAllRoutes();
       });
@@ -77,7 +88,8 @@ export function useRoutePrefetch(routes: string[], options: UseRoutePrefetchOpti
       return () => {
         window.cancelIdleCallback(idleCallback);
       };
-    } else if (prefetchOnIdle) {
+    }
+    if (prefetchOnIdle) {
       // 如果不支持 requestIdleCallback，使用 setTimeout 作为备选
       const timeout = setTimeout(() => {
         prefetchAllRoutes();
@@ -88,7 +100,9 @@ export function useRoutePrefetch(routes: string[], options: UseRoutePrefetchOpti
       };
     }
     // 默认返回空的清理函数
-    return () => {};
+    return () => {
+      // 无操作清理函数
+    };
   }, [prefetchOnIdle, prefetchAllRoutes]);
 
   return {

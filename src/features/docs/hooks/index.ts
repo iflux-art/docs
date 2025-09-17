@@ -7,7 +7,10 @@
 
 import type { DocCategory, DocItem, DocListItem } from "@/features/docs/types";
 import { API_PATHS } from "@/lib/api/api-paths";
-import { type HookResult, useContentData } from "../../../hooks/use-content-data";
+import {
+  type HookResult,
+  useContentData,
+} from "../../../hooks/use-content-data";
 
 /**
  * 使用文档分类

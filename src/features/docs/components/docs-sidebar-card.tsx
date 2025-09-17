@@ -1,8 +1,8 @@
 "use client";
 
+import { Folder } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/utils";
-import { Folder } from "lucide-react";
 import { DocsSidebarWrapper } from "./docs-sidebar-wrapper";
 
 export interface DocsSidebarCardProps {

@@ -83,7 +83,13 @@ export interface NavbarStore extends NavbarState, NavbarActions {}
 // ==================== 导航内容类型 ====================
 
 /** 导航内容项类型 */
-export type NavContentType = "doc" | "navigation" | "tool" | "command" | "history" | "link";
+export type NavContentType =
+  | "doc"
+  | "navigation"
+  | "tool"
+  | "command"
+  | "history"
+  | "link";
 
 /** 导航内容项接口 */
 export interface NavContentItem {

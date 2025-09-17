@@ -30,12 +30,12 @@ async function getAllFiles(dirPath: string): Promise<string[]> {
   try {
     const entries = await fs.readdir(dirPath, { withFileTypes: true });
     const files = await Promise.all(
-      entries.map(entry => {
+      entries.map((entry) => {
         const res = path.resolve(dirPath, entry.name);
         return entry.isDirectory() ? getAllFiles(res) : res;
-      })
+      }),
     );
-    return files.flat().filter(file => /\.(md|mdx)$/.test(file));
+    return files.flat().filter((file) => /\.(md|mdx)$/.test(file));
   } catch (error) {
     console.error("Error reading directory:", error);
     return [];
@@ -50,7 +50,7 @@ async function getDocs(): Promise<DocFile[]> {
   const files = await getAllFiles(docsDir);
 
   const docs = await Promise.all(
-    files.map(async file => {
+    files.map(async (file) => {
       try {
         const content = await fs.readFile(file, "utf-8");
         const { data, content: markdown } = matter(content);
@@ -75,7 +75,7 @@ async function getDocs(): Promise<DocFile[]> {
           category: "",
         };
       }
-    })
+    }),
   );
 
   return docs;
@@ -84,15 +84,19 @@ async function getDocs(): Promise<DocFile[]> {
 /**
  * 搜索文档
  */
-export async function searchDocs(query: string, limit = 10): Promise<DocSearchResult[]> {
+export async function searchDocs(
+  query: string,
+  limit = 10,
+): Promise<DocSearchResult[]> {
   try {
     const docs = await getDocs();
     const searchResults = docs
-      .filter(doc => {
-        const searchContent = `${doc.title} ${doc.description} ${doc.content}`.toLowerCase();
+      .filter((doc) => {
+        const searchContent =
+          `${doc.title} ${doc.description} ${doc.content}`.toLowerCase();
         return searchContent.includes(query.toLowerCase());
       })
-      .map(doc => ({
+      .map((doc) => ({
         title: doc.title,
         path: doc.url,
         excerpt: doc.description || `${doc.content.slice(0, 160)}...`,

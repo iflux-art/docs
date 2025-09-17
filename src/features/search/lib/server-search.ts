@@ -46,9 +46,13 @@ async function scanContentFiles(contentType: "docs"): Promise<SearchResult[]> {
             type: "doc",
             title: frontmatter.title,
             description:
-              typeof frontmatter.description === "string" ? frontmatter.description : undefined,
+              typeof frontmatter.description === "string"
+                ? frontmatter.description
+                : undefined,
             path: `/${contentType}/${file.replace(/\.mdx$/, "")}`,
-            tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : undefined,
+            tags: Array.isArray(frontmatter.tags)
+              ? frontmatter.tags
+              : undefined,
           });
         }
       } catch {
@@ -106,7 +110,10 @@ export async function getCachedContent() {
     return contentCache;
   }
 
-  const [docs, links] = await Promise.all([scanContentFiles("docs"), scanLinkFiles()]);
+  const [docs, links] = await Promise.all([
+    scanContentFiles("docs"),
+    scanLinkFiles(),
+  ]);
 
   contentCache = { docs, links, timestamp: now };
   return contentCache;
@@ -118,7 +125,7 @@ export async function getCachedContent() {
 export async function performServerSearch(
   query: string,
   type = "all",
-  limit = 10
+  limit = 10,
 ): Promise<{ results: SearchResult[]; total: number }> {
   if (!query.trim()) {
     return { results: [], total: 0 };
@@ -131,7 +138,7 @@ export async function performServerSearch(
   // 搜索链接
   if (type === "all" || type === "links") {
     const linkResults = links
-      .filter(link => {
+      .filter((link) => {
         const searchText =
           `${link.title} ${link.description} ${link.tags?.join(" ")}`.toLowerCase();
         return searchText.includes(queryLower);
@@ -143,7 +150,7 @@ export async function performServerSearch(
   // 搜索文档
   if (type === "all" || type === "doc") {
     const docResults = docs
-      .filter(doc => {
+      .filter((doc) => {
         const searchText = `${doc.title} ${doc.description}`.toLowerCase();
         return searchText.includes(queryLower);
       })

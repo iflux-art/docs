@@ -50,7 +50,10 @@ export function useGlobalDocs(): UseGlobalDocsResult {
 
       // Check cache validity
       const now = Date.now();
-      if (globalDocsCache.data && now - globalDocsCache.timestamp < CACHE_VALIDITY_MS) {
+      if (
+        globalDocsCache.data &&
+        now - globalDocsCache.timestamp < CACHE_VALIDITY_MS
+      ) {
         setStructure(globalDocsCache.data);
         setLoading(false);
         return;
@@ -59,10 +62,13 @@ export function useGlobalDocs(): UseGlobalDocsResult {
       const response = await fetch("/api/docs-global-structure");
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch global docs structure: ${response.statusText}`);
+        throw new Error(
+          `Failed to fetch global docs structure: ${response.statusText}`,
+        );
       }
 
-      const data: GlobalDocsStructure = (await response.json()) as GlobalDocsStructure;
+      const data: GlobalDocsStructure =
+        (await response.json()) as GlobalDocsStructure;
       setStructure(data);
 
       // Update cache
@@ -71,7 +77,8 @@ export function useGlobalDocs(): UseGlobalDocsResult {
         timestamp: Date.now(),
       };
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error occurred";
       setError(errorMessage);
       console.error("Error fetching global docs structure:", err);
     } finally {

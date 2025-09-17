@@ -3,6 +3,7 @@
  */
 
 import type { ContentItem } from "../types";
+
 export { extractHeadings, type TocHeading } from "./extract-headings";
 
 /**
@@ -53,7 +54,7 @@ export function formatNumber(num: number): string {
  */
 export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
-  delay: number
+  delay: number,
 ): (...args: Parameters<T>) => void {
   let timeoutId: NodeJS.Timeout | null;
   return (...args: Parameters<T>) => {
@@ -75,7 +76,7 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
  */
 export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
-  limit: number
+  limit: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle = false;
   return (...args: Parameters<T>) => {
@@ -94,7 +95,9 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
  * @param items 内容项数组
  * @returns 按分类分组的对象
  */
-export function groupByCategory<T extends ContentItem>(items: T[]): Record<string, T[]> {
+export function groupByCategory<T extends ContentItem>(
+  items: T[],
+): Record<string, T[]> {
   return items.reduce(
     (acc, item) => {
       const category = item.category || "未分类";
@@ -104,7 +107,7 @@ export function groupByCategory<T extends ContentItem>(items: T[]): Record<strin
       acc[category].push(item);
       return acc;
     },
-    {} as Record<string, T[]>
+    {} as Record<string, T[]>,
   );
 }
 
@@ -113,11 +116,13 @@ export function groupByCategory<T extends ContentItem>(items: T[]): Record<strin
  * @param items 内容项数组
  * @returns 按标签分组的对象
  */
-export function groupByTag<T extends ContentItem>(items: T[]): Record<string, T[]> {
+export function groupByTag<T extends ContentItem>(
+  items: T[],
+): Record<string, T[]> {
   return items.reduce(
     (acc, item) => {
       const tags = item.tags || ["未标签"];
-      tags.forEach(tag => {
+      tags.forEach((tag) => {
         if (!acc[tag]) {
           acc[tag] = [];
         }
@@ -125,7 +130,7 @@ export function groupByTag<T extends ContentItem>(items: T[]): Record<string, T[
       });
       return acc;
     },
-    {} as Record<string, T[]>
+    {} as Record<string, T[]>,
   );
 }
 
@@ -139,7 +144,7 @@ export function groupByTag<T extends ContentItem>(items: T[]): Record<string, T[
 export function sortContent<T extends ContentItem>(
   items: T[],
   sortBy: keyof T,
-  order: "asc" | "desc" = "desc"
+  order: "asc" | "desc" = "desc",
 ): T[] {
   return [...items].sort((a, b) => {
     const aValue = a[sortBy];
@@ -150,7 +155,9 @@ export function sortContent<T extends ContentItem>(
     if (bValue == null) return order === "asc" ? 1 : -1;
 
     if (typeof aValue === "string" && typeof bValue === "string") {
-      return order === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      return order === "asc"
+        ? aValue.localeCompare(bValue)
+        : bValue.localeCompare(aValue);
     }
 
     if (typeof aValue === "number" && typeof bValue === "number") {

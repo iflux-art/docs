@@ -2,7 +2,12 @@
  * 页面容器和网格布局相关工具函数
  */
 
-import type { GridColsMap, GridGapMap, PageContainerConfig, PageLayoutType } from "./layout-types";
+import type {
+  GridColsMap,
+  GridGapMap,
+  PageContainerConfig,
+  PageLayoutType,
+} from "./layout-types";
 import {
   getResponsiveClasses as baseGetResponsiveClasses,
   gridColsMap as baseGridColsMap,
@@ -27,8 +32,14 @@ export function getLayoutClassName(_layout: PageLayoutType): string {
 /**
  * 获取容器CSS类名
  */
-export function getContainerClassName(config: PageContainerConfig = {}): string {
-  const { layout = "double-sidebar", className = "", minHeight = "min-h-screen" } = config;
+export function getContainerClassName(
+  config: PageContainerConfig = {},
+): string {
+  const {
+    layout = "double-sidebar",
+    className = "",
+    minHeight = "min-h-screen",
+  } = config;
 
   const baseClasses = minHeight;
   const layoutClasses = getLayoutClassName(layout);
@@ -51,13 +62,15 @@ export function getMainContentClasses(_layout: PageLayoutType): string {
  * 获取侧边栏的响应式类名
  * 根据侧边栏位置返回相应的类名
  */
-export function getSidebarClasses(position: "left" | "right", _layout: PageLayoutType): string {
+export function getSidebarClasses(
+  position: "left" | "right",
+  _layout: PageLayoutType,
+): string {
   // 只保留双侧栏布局：左右侧栏各占2列
   if (position === "left") {
     return "md:col-span-2 lg:col-span-2 xl:col-span-2 md:col-start-1 lg:col-start-1 xl:col-start-1";
-  } else {
-    return "md:col-span-2 lg:col-span-2 xl:col-span-2 md:col-start-11 lg:col-start-11 xl:col-start-11";
   }
+  return "md:col-span-2 lg:col-span-2 xl:col-span-2 md:col-start-11 lg:col-start-11 xl:col-start-11";
 }
 
 /**

@@ -17,7 +17,7 @@
  * ```
  */
 
-import type { SiteMetadata, IosConfig, WindowsConfig } from "@/types";
+import type { IosConfig, SiteMetadata, WindowsConfig } from "@/types";
 
 /**
  * 站点元数据配置

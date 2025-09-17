@@ -49,11 +49,11 @@ export const createDocsStore = () => {
     selectedCategory: null,
 
     // Actions
-    setCategories: categories => set({ categories }),
-    setCurrentDoc: doc => set({ currentDoc: doc }),
-    setLoading: loading => set({ loading }),
-    setError: error => set({ error }),
-    setSelectedCategory: category => set({ selectedCategory: category }),
+    setCategories: (categories) => set({ categories }),
+    setCurrentDoc: (doc) => set({ currentDoc: doc }),
+    setLoading: (loading) => set({ loading }),
+    setError: (error) => set({ error }),
+    setSelectedCategory: (category) => set({ selectedCategory: category }),
     resetState: () => set({ ...initialState }),
   }));
 };

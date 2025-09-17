@@ -24,7 +24,10 @@ export interface DocsSidebarWrapperProps {
  */
 import { memo } from "react";
 
-const DocsSidebarWrapperComponent = ({ currentDoc, className }: DocsSidebarWrapperProps) => {
+const DocsSidebarWrapperComponent = ({
+  currentDoc,
+  className,
+}: DocsSidebarWrapperProps) => {
   const { structure, error } = useGlobalDocs();
 
   // 错误状态
@@ -49,10 +52,23 @@ const DocsSidebarWrapperComponent = ({ currentDoc, className }: DocsSidebarWrapp
   }
 
   // 正常渲染
-  return <DocsSidebar structure={structure} currentDoc={currentDoc} className={className} />;
+  return (
+    <DocsSidebar
+      structure={structure}
+      currentDoc={currentDoc}
+      className={className}
+    />
+  );
 };
 
-const arePropsEqual = (prevProps: DocsSidebarWrapperProps, nextProps: DocsSidebarWrapperProps) =>
-  prevProps.currentDoc === nextProps.currentDoc && prevProps.className === nextProps.className;
+const arePropsEqual = (
+  prevProps: DocsSidebarWrapperProps,
+  nextProps: DocsSidebarWrapperProps,
+) =>
+  prevProps.currentDoc === nextProps.currentDoc &&
+  prevProps.className === nextProps.className;
 
-export const DocsSidebarWrapper = memo(DocsSidebarWrapperComponent, arePropsEqual);
+export const DocsSidebarWrapper = memo(
+  DocsSidebarWrapperComponent,
+  arePropsEqual,
+);

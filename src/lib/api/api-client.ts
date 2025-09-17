@@ -3,9 +3,9 @@
  * 提供标准化的API请求处理，包括错误处理、重试机制、缓存等
  */
 
+import { classifyError, handleNetworkError, logError } from "@/lib/error";
 import type { UseAsyncOptions } from "@/types/async-types";
 import { executeAsyncOperation, executeWithRetry } from "@/utils/async";
-import { handleNetworkError, logError, classifyError } from "@/lib/error";
 
 // API配置接口
 interface ApiClientConfig {
@@ -71,8 +71,13 @@ export class ApiClient {
   /**
    * 构建完整URL
    */
-  private buildURL(endpoint: string, params?: Record<string, string | number | boolean>): string {
-    let url = this.config.baseURL ? `${this.config.baseURL}${endpoint}` : endpoint;
+  private buildURL(
+    endpoint: string,
+    params?: Record<string, string | number | boolean>,
+  ): string {
+    let url = this.config.baseURL
+      ? `${this.config.baseURL}${endpoint}`
+      : endpoint;
 
     if (params) {
       const searchParams = new URLSearchParams();
@@ -127,7 +132,9 @@ export class ApiClient {
 
       // 创建详细的错误信息
       const errorInfo = {
-        type: classifyError(new Error(errorMessage)) as "NetworkError" | "UnknownError",
+        type: classifyError(new Error(errorMessage)) as
+          | "NetworkError"
+          | "UnknownError",
         message: errorMessage,
         code: errorCode,
         context: {
@@ -162,7 +169,10 @@ export class ApiClient {
   /**
    * 发送请求
    */
-  async request<T>(endpoint: string, config: RequestConfig<T> = {}): Promise<T | null> {
+  async request<T>(
+    endpoint: string,
+    config: RequestConfig<T> = {},
+  ): Promise<T | null> {
     const url = this.buildURL(endpoint, config.params);
     const options = this.createRequestOptions(config);
 
@@ -189,7 +199,7 @@ export class ApiClient {
             }
           },
           validator: config.validator,
-        }
+        },
       );
     }
 
@@ -212,7 +222,10 @@ export class ApiClient {
   /**
    * GET请求
    */
-  get<T>(endpoint: string, config: Omit<RequestConfig<T>, "method" | "body"> = {}) {
+  get<T>(
+    endpoint: string,
+    config: Omit<RequestConfig<T>, "method" | "body"> = {},
+  ) {
     return this.request<T>(endpoint, { ...config, method: "GET" });
   }
 
@@ -233,7 +246,10 @@ export class ApiClient {
   /**
    * DELETE请求
    */
-  delete<T>(endpoint: string, config: Omit<RequestConfig<T>, "method" | "body"> = {}) {
+  delete<T>(
+    endpoint: string,
+    config: Omit<RequestConfig<T>, "method" | "body"> = {},
+  ) {
     return this.request<T>(endpoint, { ...config, method: "DELETE" });
   }
 

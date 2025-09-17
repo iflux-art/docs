@@ -1,5 +1,10 @@
-import { DocContentDisplay, DocPageLayout } from "@/features/docs/components";
-import { DocErrorHandler } from "@/features/docs/components";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import {
+  DocContentDisplay,
+  DocErrorHandler,
+  DocPageLayout,
+} from "@/features/docs/components";
 import {
   createDocBreadcrumbsServer,
   generateDocPathsFromFeatures,
@@ -8,8 +13,6 @@ import {
   resolveDocPath,
 } from "@/features/docs/lib";
 import { generateDocsMetadata } from "@/features/seo";
-import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 interface DocPageParams {
   slug: string[];
@@ -48,7 +51,9 @@ export async function generateMetadata({
   params: Promise<DocPageParams>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  const slug = Array.isArray(resolvedParams.slug) ? resolvedParams.slug : [resolvedParams.slug];
+  const slug = Array.isArray(resolvedParams.slug)
+    ? resolvedParams.slug
+    : [resolvedParams.slug];
 
   try {
     const doc = getDocContentFromFeatures(slug);
@@ -69,7 +74,9 @@ export async function generateMetadata({
 
 const DocPage = async ({ params }: { params: Promise<DocPageParams> }) => {
   const resolvedParams = await params;
-  const slug = Array.isArray(resolvedParams.slug) ? resolvedParams.slug : [resolvedParams.slug];
+  const slug = Array.isArray(resolvedParams.slug)
+    ? resolvedParams.slug
+    : [resolvedParams.slug];
 
   try {
     // 路径解析和重定向处理
@@ -95,7 +102,13 @@ const DocPage = async ({ params }: { params: Promise<DocPageParams> }) => {
       doc = getDocContentFromFeatures(slug);
     } catch (error) {
       console.error("Error getting doc content:", error);
-      return <DocErrorHandler errorType="content-error" slug={slug} error={error as Error} />;
+      return (
+        <DocErrorHandler
+          errorType="content-error"
+          slug={slug}
+          error={error as Error}
+        />
+      );
     }
 
     // 生成面包屑导航
@@ -112,7 +125,13 @@ const DocPage = async ({ params }: { params: Promise<DocPageParams> }) => {
     );
   } catch (error) {
     console.error("Error in doc page:", error);
-    return <DocErrorHandler errorType="content-error" slug={slug} error={error as Error} />;
+    return (
+      <DocErrorHandler
+        errorType="content-error"
+        slug={slug}
+        error={error as Error}
+      />
+    );
   }
 };
 

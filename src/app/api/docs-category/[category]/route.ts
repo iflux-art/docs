@@ -1,6 +1,6 @@
+import { NextResponse } from "next/server";
 import { getDocSidebar } from "@/features/docs/lib";
 import type { DocListItem } from "@/features/docs/types";
-import { NextResponse } from "next/server";
 
 interface SidebarNavItem {
   type?: "menu" | "separator" | "page" | "item" | "category";
@@ -20,10 +20,15 @@ const flattenSidebarItems = (
   items: SidebarNavItem[],
   categoryId: string,
   docs: DocListItem[],
-  parentPath = ""
+  parentPath = "",
 ): void => {
-  items.forEach(item => {
-    if (item.type !== "separator" && item.href && !item.isExternal && item.filePath) {
+  items.forEach((item) => {
+    if (
+      item.type !== "separator" &&
+      item.href &&
+      !item.isExternal &&
+      item.filePath
+    ) {
       const slug = item.filePath.split("/").pop() ?? "";
 
       docs.push({
@@ -40,7 +45,7 @@ const flattenSidebarItems = (
         item.items,
         categoryId,
         docs,
-        parentPath + (item.filePath ? `/${item.filePath}` : "")
+        parentPath + (item.filePath ? `/${item.filePath}` : ""),
       );
     }
   });
@@ -48,7 +53,7 @@ const flattenSidebarItems = (
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ category: string }> }
+  { params }: { params: Promise<{ category: string }> },
 ) {
   try {
     const resolvedParams = await params;

@@ -28,7 +28,9 @@ const performanceMetrics = {
 /**
  * 扫描文档目录结构
  */
-export const scanContentDirectory = (options: ScanOptions): { slug: string[] }[] => {
+export const scanContentDirectory = (
+  options: ScanOptions,
+): { slug: string[] }[] => {
   const {
     contentDir,
     indexFiles = DOCS_INDEX_FILES,
@@ -128,7 +130,7 @@ export const generateDocPaths = (): { slug: string[] }[] => {
   const contentDir = path.join(process.cwd(), "src", "content");
   const paths = scanContentDirectory({
     contentDir,
-    filter: itemPath => {
+    filter: (itemPath) => {
       // 过滤掉 _meta.json 文件
       return !itemPath.endsWith("_meta.json");
     },
@@ -141,7 +143,7 @@ export const generateDocPaths = (): { slug: string[] }[] => {
 
   if (process.env.NODE_ENV === "development") {
     console.warn(
-      `Generated ${paths.length} doc paths in ${performanceMetrics.pathGenerationTime}ms`
+      `Generated ${paths.length} doc paths in ${performanceMetrics.pathGenerationTime}ms`,
     );
   }
 
@@ -158,7 +160,10 @@ function isValidNavigationItem(item: SidebarItem): boolean {
 /**
  * 标准化路径
  */
-function normalizeItemPath(item: SidebarItem, _topLevelCategory: string): string {
+function normalizeItemPath(
+  item: SidebarItem,
+  _topLevelCategory: string,
+): string {
   const itemPath = item.href;
   if (!itemPath) {
     return "";
@@ -180,7 +185,7 @@ function isIndexPage(itemPath: string): boolean {
 function processNavigationItem(
   item: SidebarItem,
   topLevelCategory: string,
-  flatList: NavDocItem[]
+  flatList: NavDocItem[],
 ): void {
   if (!isValidNavigationItem(item)) {
     // Skip separators, external links, or items without href for navigation list
@@ -216,7 +221,7 @@ function processNavigationItem(
 function recurseNavigationItems(
   items: SidebarItem[],
   topLevelCategory: string,
-  flatList: NavDocItem[]
+  flatList: NavDocItem[],
 ): void {
   if (!(items && Array.isArray(items))) {
     return;

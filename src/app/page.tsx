@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { LinkCard } from "@/components/ui/link-card";
-import { DocPageLayout } from "@/features/docs/components";
-import { DocsSidebarCard } from "@/features/docs/components";
+import {
+  DocPageLayout,
+  DocsSidebarCard,
+  getAllDocsStructure,
+} from "@/features/docs/components";
 import { ThreeColumnLayout } from "@/features/layout";
-import { getAllDocsStructure } from "@/features/docs/components";
 
 /**
  * 首页元数据配置
@@ -40,7 +42,7 @@ export default function HomePage() {
       <ThreeColumnLayout leftSidebar={leftSidebar}>
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {categories.map(category => (
+            {categories.map((category) => (
               <LinkCard
                 key={category.id}
                 title={category.title}

@@ -1,11 +1,11 @@
 "use client";
 
-import { useLayoutStore } from "./layout-store.standard";
-import { getContainerClassName } from "./layout-utils";
-import type { PageContainerProps, SidebarConfig } from "./layout-types";
-import { cn } from "@/utils";
-import { ResponsiveGrid } from "./responsive-grid";
 import { useEffect } from "react";
+import { cn } from "@/utils";
+import { useLayoutStore } from "./layout-store.standard";
+import type { PageContainerProps, SidebarConfig } from "./layout-types";
+import { getContainerClassName } from "./layout-utils";
+import { ResponsiveGrid } from "./responsive-grid";
 
 /**
  * 通用页面容器组件
@@ -42,7 +42,8 @@ export const PageContainer = ({
     const sidebarsEqual =
       storedSidebars.length === sidebars.length &&
       storedSidebars.every(
-        (sb: SidebarConfig, index: number) => sb.position === sidebars[index]?.position
+        (sb: SidebarConfig, index: number) =>
+          sb.position === sidebars[index]?.position,
       );
 
     if (!sidebarsEqual) {

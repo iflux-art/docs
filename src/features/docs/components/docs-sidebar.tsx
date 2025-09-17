@@ -1,18 +1,28 @@
 "use client";
 
-import { NavLink } from "@/features/navbar/components/nav-link";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import type { SidebarItem } from "@/features/docs/types";
-import { cn } from "@/utils";
 import { ChevronRight, FileText, Folder } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import type { SidebarItem } from "@/features/docs/types";
+import { NavLink } from "@/features/navbar/components/nav-link";
+import { cn } from "@/utils";
 import type { DocCategoryWithDocs, GlobalDocsStructure } from "./global-docs";
 
 // 检查是否在客户端环境
 const isBrowser = typeof window !== "undefined";
 
 // 分隔符组件
-const SeparatorItem = ({ item, itemId }: { item: SidebarItem; itemId: string }) => (
+const SeparatorItem = ({
+  item,
+  itemId,
+}: {
+  item: SidebarItem;
+  itemId: string;
+}) => (
   <div key={itemId} className="my-3">
     <div className="h-px w-full bg-border/60" />
     {item.title && (
@@ -34,7 +44,7 @@ interface CollapsibleItemProps {
   renderSidebarItems: (
     items: SidebarItem[],
     level?: number,
-    parentPath?: string
+    parentPath?: string,
   ) => React.ReactNode;
 }
 
@@ -59,7 +69,9 @@ const CollapsibleItem = ({
             <span
               className={cn(
                 "font-medium",
-                isHovering === itemId ? "text-foreground" : "text-muted-foreground"
+                isHovering === itemId
+                  ? "text-foreground"
+                  : "text-muted-foreground",
               )}
             >
               {item.title}
@@ -68,7 +80,7 @@ const CollapsibleItem = ({
           <ChevronRight
             className={cn(
               "h-4 w-4 text-muted-foreground transition-transform",
-              openCategories[itemId] && "rotate-90"
+              openCategories[itemId] && "rotate-90",
             )}
           />
         </CollapsibleTrigger>
@@ -90,7 +102,12 @@ interface DocumentItemProps {
   onHover: (itemId: string | null) => void;
 }
 
-const DocumentItem = ({ item, itemId, currentDoc, onHover }: DocumentItemProps) => {
+const DocumentItem = ({
+  item,
+  itemId,
+  currentDoc,
+  onHover,
+}: DocumentItemProps) => {
   const { isExternal } = item;
   const isCurrentDoc = currentDoc && item.href === currentDoc;
 
@@ -104,7 +121,7 @@ const DocumentItem = ({ item, itemId, currentDoc, onHover }: DocumentItemProps) 
       onMouseLeave={() => onHover(null)}
       className={cn(
         "!flex !items-center !justify-start gap-2 rounded-md px-3 py-2 text-sm transition-colors",
-        isCurrentDoc && "bg-accent font-medium text-accent-foreground"
+        isCurrentDoc && "bg-accent font-medium text-accent-foreground",
       )}
     >
       <FileText className="h-4 w-4 text-muted-foreground" />
@@ -145,11 +162,13 @@ export interface DocsSidebarProps {
 
 // 折叠状态管理hook
 function useCollapsibleState(localStorageKey: string) {
-  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({});
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
+    {},
+  );
 
   const handleOpenChange = useCallback(
     (itemId: string, open: boolean) => {
-      setOpenCategories(prev => {
+      setOpenCategories((prev) => {
         const newState = { ...prev, [itemId]: open };
         // 保存到 localStorage（仅在客户端）
         if (isBrowser) {
@@ -158,7 +177,7 @@ function useCollapsibleState(localStorageKey: string) {
         return newState;
       });
     },
-    [localStorageKey]
+    [localStorageKey],
   );
 
   // 初始化折叠状态
@@ -167,7 +186,9 @@ function useCollapsibleState(localStorageKey: string) {
       const savedStateStr = localStorage.getItem(localStorageKey);
       if (savedStateStr) {
         try {
-          setOpenCategories(JSON.parse(savedStateStr) as Record<string, boolean>);
+          setOpenCategories(
+            JSON.parse(savedStateStr) as Record<string, boolean>,
+          );
         } catch (err) {
           console.error("Failed to parse saved state:", err);
         }
@@ -187,7 +208,7 @@ interface CategoryHeaderProps {
   renderSidebarItems: (
     items: SidebarItem[],
     level?: number,
-    parentPath?: string
+    parentPath?: string,
   ) => React.ReactNode;
 }
 
@@ -203,7 +224,10 @@ const CategoryHeader = ({
 
   return (
     <div className="mb-2">
-      <Collapsible open={isOpen} onOpenChange={(open: boolean) => onOpenChange(categoryId, open)}>
+      <Collapsible
+        open={isOpen}
+        onOpenChange={(open: boolean) => onOpenChange(categoryId, open)}
+      >
         <CollapsibleTrigger
           className="group flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/50"
           aria-expanded={isOpen}
@@ -217,7 +241,7 @@ const CategoryHeader = ({
             <ChevronRight
               className={cn(
                 "h-4 w-4 text-muted-foreground transition-transform duration-200 ease-in-out",
-                isOpen && "rotate-90"
+                isOpen && "rotate-90",
               )}
             />
           )}
@@ -242,12 +266,17 @@ const CategoryHeader = ({
  *
  * 显示所有文档的完整导航结构，支持跨分类的文档导航
  */
-export const DocsSidebar = ({ structure, currentDoc, className }: DocsSidebarProps) => {
+export const DocsSidebar = ({
+  structure,
+  currentDoc,
+  className,
+}: DocsSidebarProps) => {
   const [isHovering, setIsHovering] = useState<string | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const localStorageKey = "docs-sidebar-open-categories";
-  const { openCategories, handleOpenChange } = useCollapsibleState(localStorageKey);
+  const { openCategories, handleOpenChange } =
+    useCollapsibleState(localStorageKey);
 
   // 处理鼠标悬停
   const handleHover = useCallback((itemId: string | null) => {
@@ -290,7 +319,7 @@ export const DocsSidebar = ({ structure, currentDoc, className }: DocsSidebarPro
           </div>
         );
       }),
-    [openCategories, isHovering, handleOpenChange, currentDoc, handleHover]
+    [openCategories, isHovering, handleOpenChange, currentDoc, handleHover],
   );
 
   // 渲染所有分类
@@ -310,7 +339,12 @@ export const DocsSidebar = ({ structure, currentDoc, className }: DocsSidebarPro
           </div>
         );
       }),
-    [structure.categories, openCategories, handleOpenChange, renderSidebarItems]
+    [
+      structure.categories,
+      openCategories,
+      handleOpenChange,
+      renderSidebarItems,
+    ],
   );
 
   return (

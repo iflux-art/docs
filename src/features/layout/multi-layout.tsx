@@ -53,7 +53,11 @@ export const ThreeColumnLayout = ({
   }
 
   return (
-    <PageContainer config={{ layout: "double-sidebar" }} sidebars={sidebars} className={className}>
+    <PageContainer
+      config={{ layout: "double-sidebar" }}
+      sidebars={sidebars}
+      className={className}
+    >
       {children}
     </PageContainer>
   );

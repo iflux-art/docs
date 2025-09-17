@@ -3,7 +3,11 @@ import Link from "next/link";
 /**
  * 文档错误类型
  */
-export type DocErrorType = "not-found" | "building" | "redirect-loop" | "content-error";
+export type DocErrorType =
+  | "not-found"
+  | "building"
+  | "redirect-loop"
+  | "content-error";
 
 interface DocErrorHandlerProps {
   errorType: DocErrorType;
@@ -35,7 +39,9 @@ export const DocErrorHandler = ({
         return (
           <>
             <h1 className="mb-4 text-3xl font-bold">文档建设中</h1>
-            <p className="mb-6 text-lg text-muted-foreground">该文档页面正在编写中，敬请期待！</p>
+            <p className="mb-6 text-lg text-muted-foreground">
+              该文档页面正在编写中，敬请期待！
+            </p>
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>请求路径: {requestedPath}</p>
               <p>我们正在努力完善文档内容</p>
@@ -75,7 +81,9 @@ export const DocErrorHandler = ({
         return (
           <>
             <h1 className="mb-4 text-3xl font-bold">页面未找到</h1>
-            <p className="mb-6 text-lg text-muted-foreground">抱歉，您访问的文档页面不存在。</p>
+            <p className="mb-6 text-lg text-muted-foreground">
+              抱歉，您访问的文档页面不存在。
+            </p>
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>请求路径: {requestedPath}</p>
               <p>请检查链接是否正确，或从文档首页重新导航</p>

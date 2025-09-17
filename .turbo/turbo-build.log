@@ -1,0 +1,45 @@
+ WARN  Unsupported engine: wanted: {"node":"20.x"} (current: {"node":"v23.10.0","pnpm":"9.11.0"})
+
+> docs@1.0.0 build C:\project\ifa\apps\docs
+> next build
+
+   ▲ Next.js 15.5.3
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 4.8s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/19) ...
+   Generating static pages (4/19) 
+   Generating static pages (9/19) 
+   Generating static pages (14/19) 
+ ✓ Generating static pages (19/19)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS  Revalidate  Expire
+┌ ○ /                                    1.23 kB         359 kB
+├ ○ /_not-found                            130 B         102 kB
+├ ● /[...slug]                             310 B         358 kB          1h      1y
+├   ├ /components/layout                                                 1h      1y
+├   ├ /components/mdx                                                    1h      1y
+├   ├ /components/ui                                                     1h      1y
+├   └ [+6 more paths]
+├ ƒ /api/docs-categories                   310 B         358 kB
+├ ƒ /api/docs-category/[category]          310 B         358 kB
+├ ƒ /api/docs-global-structure             310 B         358 kB
+├ ƒ /api/docs-list                         310 B         358 kB
+├ ƒ /api/search                            130 B         102 kB
+└ ƒ /api/search-docs                       130 B         102 kB
++ First Load JS shared by all             101 kB
+  ├ chunks/39-fc28f8048450ab1c.js        45.1 kB
+  ├ chunks/7d631cee-1d10cf929d362bdc.js  54.2 kB
+  └ other shared chunks (total)          2.03 kB
+
+
+ƒ Middleware                             34.7 kB
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
