@@ -5,7 +5,7 @@
    ▲ Next.js 15.5.3
 
    Creating an optimized production build ...
- ✓ Compiled successfully in 4.9s
+ ✓ Compiled successfully in 3.3s
    Linting and checking validity of types ...
    Collecting page data ...
    Generating static pages (0/19) ...
@@ -17,23 +17,23 @@
    Collecting build traces ...
 
 Route (app)                                 Size  First Load JS  Revalidate  Expire
-┌ ○ /                                    1.23 kB         361 kB
+┌ ○ /                                    1.23 kB         363 kB
 ├ ○ /_not-found                            130 B         102 kB
-├ ● /[...slug]                             310 B         360 kB          1h      1y
+├ ● /[...slug]                             312 B         362 kB          1h      1y
 ├   ├ /components/layout                                                 1h      1y
 ├   ├ /components/mdx                                                    1h      1y
 ├   ├ /components/ui                                                     1h      1y
 ├   └ [+6 more paths]
-├ ƒ /api/docs-categories                   310 B         360 kB
-├ ƒ /api/docs-category/[category]          310 B         360 kB
-├ ƒ /api/docs-global-structure             310 B         360 kB
-├ ƒ /api/docs-list                         310 B         360 kB
+├ ƒ /api/docs-categories                   312 B         362 kB
+├ ƒ /api/docs-category/[category]          312 B         362 kB
+├ ƒ /api/docs-global-structure             312 B         362 kB
+├ ƒ /api/docs-list                         312 B         362 kB
 ├ ƒ /api/search                            130 B         102 kB
 └ ƒ /api/search-docs                       130 B         102 kB
 + First Load JS shared by all             101 kB
   ├ chunks/39-fc28f8048450ab1c.js        45.1 kB
   ├ chunks/7d631cee-1d10cf929d362bdc.js  54.2 kB
-  └ other shared chunks (total)          2.03 kB
+  └ other shared chunks (total)          2.01 kB
 
 
 ƒ Middleware                             34.7 kB
